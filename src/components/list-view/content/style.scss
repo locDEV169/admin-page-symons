@@ -1,0 +1,73 @@
+.table-view {
+    height: 50vh;
+    overflow-y: scroll;
+}
+@media only screen and (max-width: 768px) {
+    .card-view {
+        width: 100%;
+        margin: 15px 0;
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(240, 242, 245);
+        display: block;
+        .ant-collapse-content > .ant-collapse-content-box {
+            padding: 10px;
+        }
+        &__frame {
+            border-radius: 5px;
+            margin-top: 10px;
+            z-index: 1;
+            width: 100%;
+            box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
+            .ant-collapse-header {
+                font-weight: 600;
+                font-size: 14px;
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                align-items: center;
+                label {
+                    word-break: break-all;
+                    width: 100%;
+                }
+            }
+            &--unit {
+                display: flex;
+                align-items: center;
+                border-bottom: 1px solid #ddd;
+                justify-content: space-between;
+                padding: 10px 0px;
+                label {
+                    text-transform: uppercase;
+                    font-weight: 500;
+                    font-size: 12px;
+                    width: 100%;
+                }
+                p {
+                    margin: 0;
+                    display: flex;
+                    justify-content: flex-end;
+                }
+                span {
+                    margin: 0;
+                }
+            }
+        }
+    }
+}
+@media only screen and (max-width: 480px) {
+    .card-view__frame--unit {
+        label {
+            width: max-content;
+        }
+        p {
+            padding-left: 20px;
+            word-break: break-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-line-clamp: 1;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+        }
+    }
+}

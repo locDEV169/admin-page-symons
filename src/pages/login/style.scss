@@ -1,0 +1,102 @@
+.container-login {
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background: #9053c7;
+    background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+}
+.wrap-login {
+    width: 780px;
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 80px 75px 70px 75px;
+}
+.login-img {
+    width: 320px;
+}
+.form__spanLogin {
+    font-family: 'Franklin Gothic Medium';
+    font-size: 24px;
+    color: #333333;
+    line-height: 1.2;
+    text-align: center;
+    width: 100%;
+    display: block;
+    padding-bottom: 20px;
+    text-transform: uppercase;
+}
+.form__spanError {
+    color: #ff4d4f;
+    margin: 10px;
+    display: block;
+}
+.form__input {
+    width: 200px;
+}
+.ant-form-item-label > label {
+    color: #8a8c8d;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+.form__submitAction {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    text-transform: uppercase;
+    height: 35px;
+    border-radius: 25px;
+    color: #1890ff;
+    background: #e6f7ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    transition: all 0.4s;
+}
+.form__submitAction:hover {
+    background: #fff9e6;
+    color: #1890ff;
+}
+
+@media screen and (max-width: 860px) {
+    .wrap-login {
+        max-width: 670px;
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 40px 20px 50px 10px;
+    }
+}
+@media screen and (max-width: 680px) {
+    .wrap-login {
+        max-width: 450px;
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 40px 40px 30px 40px;
+    }
+}
+@media screen and (max-width: 480px) {
+    .wrap-login {
+        max-width: 300px;
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 40px 45px 30px 60px;
+    }
+    .login-img {
+        display: none;
+    }
+}

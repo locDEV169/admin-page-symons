@@ -1,0 +1,22 @@
+#sider {
+    background-color: #096dd9;
+    transition: 850ms;
+    justify-content: center;
+    ul {
+        background-color: #096dd9;
+        text-transform: uppercase;
+        white-space: normal;
+        list-style: none;
+        text-overflow: none !important;
+        li {
+            align-items: center;
+            display: block;
+        }
+    }
+}
+.ant-layout-sider-collapsed .sider-span {
+    display: none;
+}
+.ant-tooltip {
+    display: none;
+}
