@@ -1,5 +1,5 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
-import { Button, Layout } from 'antd'
+import { Layout } from 'antd'
 import Cookies from 'js-cookie'
 import { default as React } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,15 +25,15 @@ export function MainHeader() {
     }
 
     return (
-      <VHeader className='site-layout-background' style={{ padding: 0 }} id='header-background'>
-        {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-          className: 'trigger',
-          onClick: toggle
-        })}
-        <h3 id='nav-name'>Hi,<span>{getUserName}</span></h3>
-        <VButton id='nav-action' onClick={logOut}>
-          LogOut
-        </VButton>
-      </VHeader>
+        <VHeader className='site-layout-background' style={{ padding: 0 }} id='header-background'>
+            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                className: 'trigger',
+                onClick: toggle
+            })}
+            <div id='nav-name'>Hi,<span>{getUserName}</span></div>
+            <VButton id='nav-action' onClick={logOut}>
+                LogOut
+            </VButton>
+        </VHeader>
     )
 }

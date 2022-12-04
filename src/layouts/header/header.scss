@@ -6,14 +6,18 @@
     box-shadow: 0 4px 12px 0 #a3a7a8;
     width: 100%;
 }
+
 #nav-name {
     display: inline;
     float: right;
     margin: 0px 20px;
+    font-size: 16px;
+
     span {
         color: #1890ff;
     }
 }
+
 #nav-action {
     float: right;
     margin: 15px;

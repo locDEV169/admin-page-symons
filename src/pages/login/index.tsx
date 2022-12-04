@@ -35,12 +35,14 @@ export default function LoginPage() {
   const [form] = Form.useForm();
 
   const onFinish = (values: User) => {
-    api.post('/auth/login', values)
-      .then((res: LoginType) => {
-        setCookie("username", res.data.data.username, res.data.data.expireIn)
-        window.location.href = '/'
-      })
-      .catch((errors) => handleError(errors))
+    setCookie("username", values.username, 36400)
+    window.location.href = '/'
+    // api.post('/auth/login', values)
+    //   .then((res: LoginType) => {
+    //     setCookie("username", res.data.data.username, res.data.data.expireIn)
+    //     window.location.href = '/'
+    //   })
+    //   .catch((errors) => handleError(errors))
   };
 
   const handleError = (err: ErrorType) => {
