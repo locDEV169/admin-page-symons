@@ -7,7 +7,7 @@ import { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ListView } from '../../components/list-view'
-import { API_URL } from '../../constants/api'
+import API_URL from '../../constants/api'
 import './style.scss'
 
 interface Equipments {

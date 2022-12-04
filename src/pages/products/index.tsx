@@ -1,34 +1,23 @@
-import { CaretRightOutlined, PlusOutlined } from '@ant-design/icons'
-import { default as Button } from 'antd/es/button'
-import 'antd/es/button/style/index.css'
-import { default as Collapse } from 'antd/es/collapse'
-import 'antd/es/collapse/style/index.css'
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import { default as Form } from 'antd/es/form'
+import 'antd/es/form/style/index.css'
+import { default as Input } from 'antd/es/input'
+import 'antd/es/input/style/index.css'
+import { default as Space } from 'antd/es/space'
+import 'antd/es/space/style/index.css'
 import { ColumnsType } from 'antd/es/table'
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { ListView } from '../../components/list-view'
-import { API_URL } from '../../constants/api'
+import 'antd/es/tooltip/style/index.css'
+import { ListView } from 'components/list-view'
+import React, { LegacyRef, useRef } from 'react'
+import { Link, useHistory } from 'react-router-dom'
+import { VButton } from 'vendor/pages'
 
-interface ProductData {
+interface Products {
     id?: number | string
     name?: string
-    image?: string
-    catalogNumber?: string
-    description?: string
-    standardPackage?: number
-    cubic?: number
-    ship?: number
-    price?: number
-}
-interface NumberFormat {
-    format(value?: number): string
-}
-const numberFormat: NumberFormat = Intl.NumberFormat('en-US')
-
-const { Panel } = Collapse
-
-const renderNumberTable = (text: number) => {
-    return numberFormat.format(text)
+    category?: { id: number; name: string }
+    subCategory?: { id: number; name: string }
+    categoryId?: number
 }
 
 const renderImageTable = (image: string) => {
@@ -36,126 +25,131 @@ const renderImageTable = (image: string) => {
     return <img style={{ width: '70px', height: '70px' }} src={getImageString[0]} />
 }
 
-const columns: ColumnsType<ProductData | object> = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name'
-    },
-    {
-        title: 'Image',
-        dataIndex: 'image',
-        key: 'image',
-        width: '70px',
-        render: renderImageTable
-    },
-    {
-        title: 'Catalog Number',
-        dataIndex: 'catalogNumber',
-        key: 'catalogNumber'
-    },
-    {
-        title: 'Std.Pkg.',
-        dataIndex: 'standardPackage',
-        key: 'standardPackage',
-        render: renderNumberTable
-    },
-    {
-        title: 'Cubic feet',
-        dataIndex: 'cubic',
-        key: 'cubic',
-        render: renderNumberTable
-    },
-    {
-        title: 'Std.Pkg.Ship Wt.',
-        dataIndex: 'ship',
-        key: 'ship',
-        render: function renderStdPackageTable(ship: number) {
-            return numberFormat.format(ship) + ` lbs.`
-        }
-    },
-    {
-        title: 'List Price',
-        key: 'price',
-        dataIndex: 'price',
-        render: function renderPriceTable(price: number) {
-            return `$` + numberFormat.format(price)
-        }
-    },
-    {
-        title: 'Action',
-        dataIndex: 'id',
-        key: '',
-        render: function renderAction(id) {
-            return (
-                <>
-                    <Link style={{ marginRight: '10px' }} to={`/product/update/${id}`}>
-                        Edit
-                    </Link>
-                    <Link to={`/product/detail/${id}`}>More</Link>
-                </>
-            )
-        }
-    }
-]
-
-function cardView(cardData: ProductData) {
-    return (
-        <div className='card-view' key={cardData.id}>
-            <Collapse
-                accordion
-                expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 270 : 90} />}
-                expandIconPosition='right'
-                className='site-collapse-custom-collapse card-view__frame'>
-                <Panel header={<label> {cardData.name}</label>} key='id' extra={`$` + numberFormat.format(cardData.price)}>
-                    <div className='card-view__frame--unit'>
-                        <label>Image: </label>
-                        {renderImageTable(`${cardData.image}`)}
-                    </div>
-                    <div className='card-view__frame--unit'>
-                        <label>CatalogNumber: </label>
-                        <p>{cardData.catalogNumber}</p>
-                    </div>
-                    <div className='card-view__frame--unit'>
-                        <label>Std.Pkg: </label>
-                        <p> {numberFormat.format(cardData.standardPackage)}</p>
-                    </div>
-                    <div className='card-view__frame--unit'>
-                        <label>Cubic feet: </label>
-                        <p> {numberFormat.format(cardData.cubic)}</p>
-                    </div>
-                    <div className='card-view__frame--unit'>
-                        <label>Std.Pkg.Ship Wt.: </label>
-                        <p> {numberFormat.format(cardData.ship) + `lbs.`}</p>
-                    </div>
-                    <div className='card-view__frame--unit'>
-                        <Link style={{ width: '100%' }} to={`/product/update/${cardData.id}`}>
-                            <Button style={{ width: '100%' }} type='primary'>
-                                Edit
-                            </Button>
-                        </Link>
-                        <Link style={{ width: '100%' }} to={`/product/detail/${cardData.id}`}>
-                            <Button style={{ width: '100%' }} type='primary'>
-                                More
-                            </Button>
-                        </Link>
-                    </div>
-                </Panel>
-            </Collapse>
-        </div>
-    )
-}
-export default function ProductsPage() {
-    const PRODUCTS_API = `${API_URL}/products`
+function cardView(cardData: Products) {
     return (
         <>
-            <Link to='/product/create'>
-                <Button type='primary'>
+            <div className='card-view__frame--unit'>
+                <label>Catagory Name: </label>
+                <Link className='card-view__frame--unit--name' to={`/categories/detail/${cardData.category?.id}`}>
+                    {cardData.category?.name}
+                </Link>
+            </div>
+            <div className='card-view__frame--unit'>
+                <label>Sub-categories Name: </label>
+                <Link className='card-view__frame--unit--name' to={`/sub-categories/detail/${cardData.subCategory?.id}`}>
+                    {cardData.subCategory?.name}
+                </Link>
+            </div>
+        </>
+    )
+}
+
+export default function ProductsPage() {
+    const PRODUCT_API = `products`
+    let history = useHistory()
+    const [form] = Form.useForm()
+
+    const params = new URLSearchParams(location.search)
+    const keyword: LegacyRef<Input> = useRef(null)
+
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: function renderFilter({ confirm, clearFilters }) {
+            const handleSearch = (dataIndex) => {
+                confirm()
+                params.set('page', `1`)
+                params.set(`${dataIndex}`, `${keyword.current?.input.value || ''}`)
+                history.replace({ pathname: location.pathname, search: params.toString() })
+            }
+            return (
+                <div style={{ padding: 8 }}>
+                    <Form form={form}>
+                        <Form.Item name={dataIndex}>
+                            <Input
+                                autoFocus
+                                placeholder={`Type text here `}
+                                name={dataIndex}
+                                type={dataIndex}
+                                ref={keyword}
+                                defaultValue={params.get(`${dataIndex}`) || ''}
+                                onPressEnter={() => handleSearch(dataIndex)}
+                                style={{ marginBottom: 8, display: 'block' }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Space>
+                                <VButton
+                                    type='primary'
+                                    onClick={() => handleSearch(dataIndex)}
+                                    icon={<SearchOutlined />}
+                                    size='small'
+                                    style={{ width: 90 }}>
+                                    Search
+                                </VButton>
+                                <VButton
+                                    onClick={() => {
+                                        clearFilters()
+                                        form.resetFields([`${dataIndex}`])
+                                        params.delete(dataIndex)
+                                        history.replace({ pathname: location.pathname, search: params.toString() })
+                                    }}
+                                    size='small'
+                                    style={{ width: 90 }}>
+                                    Reset
+                                </VButton>
+                            </Space>
+                        </Form.Item>
+                    </Form>
+                </div>
+            )
+        },
+        filterIcon: function renderIcon() {
+            return <SearchOutlined />
+        }
+    })
+    const columns: ColumnsType<Products | object> = [
+        {
+            title: 'Products Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: function nameCell(name: string, record: Products) {
+                return <Link to={`products/detail/${record.id}`}>{name}</Link>
+            }
+        },
+        {
+            title: 'Image',
+            dataIndex: 'image',
+            key: 'image',
+            width: '70px',
+            render: renderImageTable
+        },
+        {
+            title: 'Categories Name',
+            dataIndex: 'category',
+            key: 'category',
+            render: function categoryNameCell(category: { name: string }, record: Products) {
+                return <Link to={`/categories/detail/${record.categoryId}`}>{category.name}</Link>
+            },
+            ...getColumnSearchProps('category')
+        },
+        {
+            title: 'Sub-categories Name',
+            dataIndex: 'subCategory',
+            key: 'subCategory',
+            render: function subCategoryNameCell(subCategory: { name: string }, record: Products) {
+                return <Link to={`/sub-categories/detail/${record.id}`}>{subCategory.name}</Link>
+            },
+            ...getColumnSearchProps('subcategory')
+        }
+    ]
+    return (
+        <>
+            <Link to='/products/create'>
+                <VButton type='primary'>
                     <PlusOutlined />
                     Add
-                </Button>
+                </VButton>
             </Link>
-            <ListView columns={columns} urlApi={PRODUCTS_API} cardView={cardView} />
+            <ListView columns={columns} cardView={cardView} urlApi={PRODUCT_API} />
         </>
     )
 }

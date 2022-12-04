@@ -1,56 +1,45 @@
-import { FrownOutlined, SmileOutlined } from '@ant-design/icons'
-import 'antd/es/input-number/style/index.css'
 import { default as notification } from 'antd/es/notification'
 import 'antd/es/notification/style/index.css'
-import axios from 'axios'
-import { API_URL } from 'constants/api'
-import React from 'react'
+import UploadLink from 'components/upload-link'
+import api from 'constants/api'
+import { default as React } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ProductForm } from '../product-form'
 
 interface Values {
+    id: number
     name: string
-    image: string
-    catalogNumber: string
+    note: string
     description: string
-    standardPackage: number
-    cubic: number
-    ship: number
-    price: number
+    feature: string
+    image: string
+    referenceLink: string
 }
 
-const api = axios.create({
-    baseURL: `${API_URL}/products`
-})
-
-export default function AddProductPage() {
-    let history = useHistory()
+export default function AddProductsPage() {
+    const history = useHistory()
     const onAddProduct = (values: Values) => {
-        api.post('/create', {
+        const convertLinkVideo = values.referenceLink ? `${'//www.youtube.com/embed/' + UploadLink(values.referenceLink)}` : ''
+        api.post('/products/create', {
             ...values,
-            image: values.image.toString()
+            note: values.note || '',
+            image: values.image.toString(),
+            feature: values.feature || '',
+            referenceLink: convertLinkVideo
         })
             .then(() => {
                 notification.success({
-                    message: 'Product has been added Successfully',
-                    icon: <SmileOutlined style={{ color: '#108ee9' }} />
+                    message: 'Product added successfully',
+                    description: 'Added successful Product'
                 })
                 history.goBack()
             })
             .catch(() => {
-                return notification.error({
-                    message: 'Product has been added Failed',
-                    icon: <FrownOutlined style={{ color: '#f21b3b' }} />
+                notification.error({
+                    message: 'Product added Failed',
+                    description: 'Added Failed Product'
                 })
             })
     }
-
-    return (
-        <>
-            <p>
-                <strong>Add Product Form</strong>
-            </p>
-            <ProductForm onSubmit={onAddProduct} />
-        </>
-    )
+    return <ProductForm onSubmit={onAddProduct} />
 }
