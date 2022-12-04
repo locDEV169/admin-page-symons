@@ -4,7 +4,7 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
@@ -12,5 +12,8 @@
         "source.fixAll.eslint": false,
         "source.organizeImports": true
     },
-    "cSpell.diagnosticLevel": false
+    "cSpell.diagnosticLevel": false,
+    "[scss]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    }
 }

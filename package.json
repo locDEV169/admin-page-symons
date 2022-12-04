@@ -47,7 +47,7 @@
         "@types/ckeditor__ckeditor5-ui": "^29.0.4",
         "@types/ckeditor__ckeditor5-upload": "^27.0.5",
         "@types/compression-webpack-plugin": "^6.0.6",
-        "@types/js-cookie": "^3.0.0",
+        "@types/js-cookie": "^3.0.2",
         "@types/node": "^12.0.0",
         "@types/react": "^16.9.55",
         "@types/react-dom": "^16.9.9",

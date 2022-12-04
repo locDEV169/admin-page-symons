@@ -2,9 +2,7 @@ import {
   EditOutlined,
   HomeOutlined,
   QuestionCircleOutlined,
-  SettingOutlined,
-  ShoppingCartOutlined,
-  TableOutlined
+  SettingOutlined
 } from '@ant-design/icons'
 import { default as Menu } from 'antd/es/menu'
 import 'antd/es/menu/style/index.css'
@@ -30,15 +28,7 @@ export function MainMenu() {
         <Menu.Item key='3' icon={<EditOutlined />}>
           <Link to='/editor'><span className="sider-span">Editor</span></Link>
         </Menu.Item>
-        <Menu.Item key='4' icon={<ShoppingCartOutlined />}>
-          <Link to='/product'><span className="sider-span">Product</span></Link>
-        </Menu.Item>
-        <Menu.Item key='5' icon={<TableOutlined />}>
-          <Link to='/brand'>
-            <span className='sider-span'>Brand</span>
-          </Link>
-        </Menu.Item>
-        <Menu.Item key='6' icon={<QuestionCircleOutlined />}>
+        <Menu.Item key='4' icon={<QuestionCircleOutlined />}>
           <Link to='/'>
             <span className='sider-span'>Help</span>
           </Link>

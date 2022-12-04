@@ -82,9 +82,6 @@ export default function LoginPage() {
   return (
     <div className="container-login" >
       <div className="wrap-login">
-        <div className="login-img">
-          <img src="https://colorlib.com/etc/lf/Login_v1/images/img-01.png" alt="IMG" />
-        </div>
         <Form
           form={form}
           name="form__login"
@@ -93,33 +90,35 @@ export default function LoginPage() {
           onFinish={onFinish}
           autoComplete="off" >
           <span className="form__spanLogin">
-            Member Login
+            システムにログインします。
           </span>
           <Form.Item
-            label="Username"
+            label="ログインID"
             name="username"
             rules={[
               {
                 required: true,
                 message: 'Please input your username!',
               },
-            ]}>
+            ]}
+            style={{ display: 'flex' }}>
             <Input className="form__input" />
           </Form.Item>
           <Form.Item
-            label="Password"
+            label="パスワード"
             name="password"
             rules={[
               {
                 required: true,
                 message: 'Please input your password!',
               },
-            ]}>
-            <Input.Password style={{ width: '200px' }} />
+            ]}
+            style={{ display: 'flex' }}>
+            <Input.Password style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16, }}>
             <VButton htmlType="submit" className="form__submitAction">
-              Login
+              ログイン
             </VButton>
           </Form.Item>
         </Form>

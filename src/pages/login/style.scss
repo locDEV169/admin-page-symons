@@ -4,9 +4,10 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background: #9053c7;
-    background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+    // background: #9053c7;
+    // background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
 }
+
 .wrap-login {
     width: 780px;
     background: #fff;
@@ -14,12 +15,21 @@
     overflow: hidden;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-around;
     padding: 80px 75px 70px 75px;
+    border: 1px solid #000000;
+    box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);
+    border-radius: 25px;
 }
+
 .login-img {
     width: 320px;
 }
+
+#form__login {
+    width: 70%;
+}
+
 .form__spanLogin {
     font-family: 'Franklin Gothic Medium';
     font-size: 24px;
@@ -31,19 +41,23 @@
     padding-bottom: 20px;
     text-transform: uppercase;
 }
+
 .form__spanError {
     color: #ff4d4f;
     margin: 10px;
     display: block;
 }
+
 .form__input {
-    width: 200px;
+    width: 100%;
 }
-.ant-form-item-label > label {
+
+.ant-form-item-label>label {
     color: #8a8c8d;
     font-size: 16px;
     text-transform: uppercase;
 }
+
 .form__submitAction {
     font-size: 15px;
     line-height: 1.5;
@@ -59,6 +73,7 @@
     padding: 0 25px;
     transition: all 0.4s;
 }
+
 .form__submitAction:hover {
     background: #fff9e6;
     color: #1890ff;
@@ -75,6 +90,7 @@
         padding: 40px 20px 50px 10px;
     }
 }
+
 @media screen and (max-width: 680px) {
     .wrap-login {
         max-width: 450px;
@@ -86,6 +102,7 @@
         padding: 40px 40px 30px 40px;
     }
 }
+
 @media screen and (max-width: 480px) {
     .wrap-login {
         max-width: 300px;
@@ -96,6 +113,7 @@
         justify-content: space-around;
         padding: 40px 45px 30px 60px;
     }
+
     .login-img {
         display: none;
     }
