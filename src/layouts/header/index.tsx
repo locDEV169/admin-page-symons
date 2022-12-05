@@ -1,26 +1,17 @@
 import {
-    DownOutlined,
-    HomeOutlined,
-    LoginOutlined, PartitionOutlined,
-    ShoppingCartOutlined,
-    TableOutlined,
-    UserOutlined
+    DownOutlined, LoginOutlined
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { default as Drawer } from 'antd/es/drawer';
 import 'antd/es/drawer/style/index.css';
 import { default as Dropdown } from 'antd/es/dropdown';
 import 'antd/es/dropdown/style/index.css';
-import { Header } from 'antd/es/layout/layout';
 import { default as Menu } from 'antd/es/menu';
 import 'antd/es/menu/style/index.css';
-import SubMenu from 'antd/es/menu/SubMenu';
 import debounce from 'debounce';
 import Cookies from 'js-cookie';
 import { default as React, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { VHeader, VSider } from 'vendor/layout';
+import { VHeader } from 'vendor/layout';
 import { selectCollapsed, toogleSider } from '../../store/slices/app';
 import '../header/header.scss';
 
@@ -60,7 +51,7 @@ export function MainHeader() {
 
     const item = (
         <Menu>
-            <Menu.Item key='1' onClick={logOut} icon={<LoginOutlined />} danger>
+            <Menu.Item key='1' onClick={logOut} icon={<LoginOutlined />} danger className='dropbox__menu'>
                 LogOut
             </Menu.Item>
         </Menu>
@@ -73,68 +64,6 @@ export function MainHeader() {
         setVisible(false)
     }
 
-    const getDrawer = () => {
-        return (
-            <Drawer placement='left' closable={false} onClose={() => onClose()} visible={visible} zIndex={10}>
-                <VSider trigger={null} collapsible id='sider'>
-                    <div className='logo' />
-                    <Menu theme='dark' mode='inline' defaultSelectedKeys={[pathname.split('/')[1]]}>
-                        <Menu.Item key='' icon={<HomeOutlined />}>
-                            <Link to='/'>
-                                <span className='sider-span'>Home</span>
-                            </Link>
-                        </Menu.Item>
-                        <SubMenu key='1' icon={<TableOutlined />} title='Categories'>
-                            <Menu.Item key='categories'>
-                                <Link to='/categories'>
-                                    <span className='sider-span'>List</span>
-                                </Link>
-                            </Menu.Item>
-                            <Menu.Item key='sub-categories'>
-                                <Link to='/sub-categories'>
-                                    <span className='sider-span'>Sub-Categories</span>
-                                </Link>
-                            </Menu.Item>
-                        </SubMenu>
-                        <SubMenu key='2' icon={<PartitionOutlined />} title='Products'>
-                            <Menu.Item key='products'>
-                                <Link to='/products'>
-                                    <span className='sider-span'>List</span>
-                                </Link>
-                            </Menu.Item>
-                            <Menu.Item key='attributes'>
-                                <Link to='/attributes'>
-                                    <span className='sider-span'>Attribute</span>
-                                </Link>
-                            </Menu.Item>
-                        </SubMenu>
-                        <Menu.Item icon={<ShoppingCartOutlined />} key='catalogs' title='Catalog'>
-                            <Link to='/catalogs'>
-                                <span className='sider-span'>Catalog</span>
-                            </Link>
-                        </Menu.Item>
-                        <SubMenu key='4' icon={<UserOutlined />} title='Account'>
-                            <Menu.Item key='users'>
-                                <Link to='/users'>
-                                    <span className='sider-span'>List</span>
-                                </Link>
-                            </Menu.Item>
-                            <Menu.Item key='profile'>
-                                <Link to='/profile'>
-                                    <span className='sider-span'>Profile</span>
-                                </Link>
-                            </Menu.Item>
-                        </SubMenu>
-                    </Menu>
-                </VSider>
-            </Drawer>
-        )
-    }
-
-    const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
-        key,
-        label: `nav ${key}`,
-    }));
 
     return (
         <VHeader className='site-layout-background' style={{ padding: 0 }} id='header-background'>
@@ -142,14 +71,20 @@ export function MainHeader() {
                 className: 'trigger',
                 onClick: width > 468 ? toggle : showDrawer
             })} */}
-            <div className="nav-left">.
-
-                <h3 id='nav-name'>Point History</h3>
-                <h3 id='nav-name'>Transaction History</h3>
-                <h3 id='nav-name'>Statistical</h3>
-                <Header className="header">
-                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} items={itemsMenu} />
-                </Header>
+            <div className="nav-left">
+                <Menu mode="horizontal" defaultSelectedKeys={['1']} className='nav-left__menu'>
+                    <Menu.Item key='1'>
+                        <Link to='/points-history'><span className="sider-span">Point History</span></Link>
+                    </Menu.Item>
+                    <Menu.Item key='2'>
+                        <Link to='/product'><span className="sider-span">Transaction History</span></Link>
+                    </Menu.Item>
+                    <Menu.Item key='3'>
+                        <Link to='/brand'>
+                            <span className='sider-span'>Statistical</span>
+                        </Link>
+                    </Menu.Item>
+                </Menu>
             </div>
             <div className="nav-right">
                 <h3 id='nav-name'>

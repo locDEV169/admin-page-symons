@@ -35,8 +35,8 @@ export default function LoginPage() {
     const [form] = Form.useForm();
 
     const onFinish = (values: User) => {
-        setCookie("username", values.username, 36400)
-        window.location.href = '/'
+        setCookie("username", values.username, 14515200000)
+        window.location.href = '/points-history'
         // api.post('/auth/login', values)
         //   .then((res: LoginType) => {
         //     setCookie("username", res.data.data.username, res.data.data.expireIn)

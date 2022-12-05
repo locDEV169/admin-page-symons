@@ -13,6 +13,7 @@ const AddBrandPage = React.lazy(() => import('../pages/brands/add-brand'))
 const DetailBrand = React.lazy(() => import('../pages/brands/detail-brand'))
 const DetailProduct = React.lazy(() => import('../pages/products/detail-product'))
 const EditProductPage = React.lazy(() => import('../pages/products/edit-product'))
+const PointHistoyPage = React.lazy(() => import('../pages/point-history'))
 
 type AppState = { checking: boolean; authorized?: boolean }
 export function MainRoutes() {
@@ -58,6 +59,7 @@ function AuthorizedRoutes() {
                     <Route exact path='/brand/detail/:id' component={DetailBrand} />
                     <Route exact path='/product/detail/:id' component={DetailProduct} />
                     <Route exact path='/product/update/:id' component={EditProductPage} />
+                    <Route exact path='/points-history' component={PointHistoyPage} />
                 </Switch>
             </Suspense>
         </MainLayout>

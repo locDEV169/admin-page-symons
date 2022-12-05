@@ -1,12 +1,16 @@
+import { default as Form } from 'antd/es/form'
+import 'antd/es/form/style/index.css'
+import { default as Input } from 'antd/es/input'
+import 'antd/es/input/style/index.css'
 import { default as notification } from 'antd/es/notification'
 import 'antd/es/notification/style/css'
+import 'antd/es/space/style/index.css'
 import { ColumnsType } from 'antd/es/table'
-import Axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react'
+import api from 'constants/api'
+import React, { LegacyRef, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router'
 import { ContentView } from './content'
 import { PaginationView } from './pagination'
-import { SearchView } from './search'
 interface Props {
     urlApi: string
     columns: ColumnsType<object>
@@ -45,21 +49,27 @@ export function ListView(props: Props) {
     const [state, setState] = useState<ListViewState>(initialState())
     const mountStack = useRef({ [urlApi]: true }).current
     const history = useHistory()
+    const [form] = Form.useForm()
+
+    const params = new URLSearchParams(location.search)
+    const keyword: LegacyRef<Input> = useRef(null)
 
     async function getDataList(query: string = history.location.search) {
         try {
-            const api = Axios.create({ baseURL: urlApi })
-            const response = await api.get(query)
+            console.log(query);
+
+            // const api = Axios.create({ baseURL: urlApi })
+            const response = await api.get('points/point-history')
             const limit = Number(new URLSearchParams(query).get('limit') || '10')
 
-            const { data: dataSource, totalRecords: totalRecords, page: page } = response.data.data
+            const { pointHistory: dataSource, count: totalRecords, page: page } = response.data
 
             if (mountStack[urlApi]) {
                 setState((prev) => {
                     const { pagination = {}, ...rest } = prev
                     return {
                         ...rest,
-                        dataSource,
+                        dataSource: dataSource,
                         pagination: { ...pagination, totalRecords, page, limit: limit }
                     }
                 })
@@ -84,7 +94,7 @@ export function ListView(props: Props) {
 
     return (
         <div className='list-view'>
-            <SearchView initialFilter={state.filter} />
+            {/* <SearchView initialFilter={state.filter} /> */}
             <ContentView columns={columns} dataSource={state.dataSource} cardView={cardView} />
             <PaginationView pagination={state.pagination} />
         </div>

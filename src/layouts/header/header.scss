@@ -22,6 +22,52 @@
     }
 }
 
+.nav-left {
+    &__menu {
+        background-color: #116D76;
+        border-bottom: 0px;
+        font-family: 'Quicksand';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 25px;
+
+        span {
+            color: #FFFFFF;
+        }
+    }
+
+    .ant-menu-item-selected {
+        background-color: #308E97;
+        border-bottom: 0px;
+    }
+
+    .ant-menu-horizontal>.ant-menu-item {
+        position: relative;
+        top: 0px;
+        display: inline-block;
+        vertical-align: bottom;
+    }
+
+    .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item-selected::after {
+        background-color: #308E97;
+        border-bottom: 0px;
+
+    }
+
+    .ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover::after {
+        border-bottom: 0px;
+    }
+}
+
+.dropbox {
+    &__menu {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 25px;
+    }
+}
+
 #nav-action {
     float: right;
     margin: 15px;
