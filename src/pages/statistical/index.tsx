@@ -68,7 +68,7 @@ export default function ProductsPage() {
             title: 'Customer ID',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: function nameCell(name: string, record: Statistical) {
+            render: function nameCell(name: string, record: any) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
@@ -76,7 +76,7 @@ export default function ProductsPage() {
             title: 'Lastest Point',
             dataIndex: 'appId',
             key: 'appId',
-            render: function nameCell(name: string, record: Statistical) {
+            render: function nameCell(name: string, record: any) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
@@ -87,7 +87,7 @@ export default function ProductsPage() {
             title: 'Store ID',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: function nameCell(name: string, record: Statistical) {
+            render: function nameCell(name: string, record: any) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
@@ -95,7 +95,7 @@ export default function ProductsPage() {
             title: 'Lastest Point',
             dataIndex: 'appId',
             key: 'appId',
-            render: function nameCell(name: string, record: Statistical) {
+            render: function nameCell(name: string, record: any) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
