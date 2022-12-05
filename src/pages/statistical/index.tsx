@@ -17,10 +17,9 @@ import './style.scss'
 
 interface Statistical {
     id?: number | string
-    name?: string
-    category?: { id: number; name: string }
-    subCategory?: { id: number; name: string }
-    categoryId?: number
+    storeId?: number | string
+    customerId?: number | string
+    lastPoint: number
 }
 
 const { RangePicker } = DatePicker;

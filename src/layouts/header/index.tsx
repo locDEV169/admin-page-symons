@@ -9,10 +9,8 @@ import 'antd/es/menu/style/index.css';
 import debounce from 'debounce';
 import Cookies from 'js-cookie';
 import { default as React, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { VHeader } from 'vendor/layout';
-import { selectCollapsed, toogleSider } from '../../store/slices/app';
 import '../header/header.scss';
 
 function useWindowSize(delay = 100) {
@@ -32,17 +30,8 @@ function useWindowSize(delay = 100) {
 }
 
 export function MainHeader() {
-    const collapsed = useSelector(selectCollapsed)
-    const dispatch = useDispatch()
     const getUserName = Cookies.get('username')
-    const width: number = useWindowSize()
-    const [visible, setVisible] = useState<boolean>(false)
-    const toggle = () => {
-        dispatch(toogleSider(collapsed ? false : true))
-    }
     const location = useLocation()
-    const { pathname } = location
-
     const logOut = () => {
         Cookies.remove('username')
         Cookies.remove('token')

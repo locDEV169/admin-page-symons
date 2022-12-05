@@ -16,10 +16,15 @@ import './style.scss'
 
 interface TransactionHistory {
     id?: number | string
-    name?: string
-    category?: { id: number; name: string }
-    subCategory?: { id: number; name: string }
-    categoryId?: number
+    blockTime?: any
+    blockNumber?: number
+    blockHash?: string
+    txHash?: string
+    toAdress?: string
+    amount?: number
+    fee?: number
+    type?: string
+    status?: string
 }
 
 const { RangePicker } = DatePicker;

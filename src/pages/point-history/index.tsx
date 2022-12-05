@@ -17,29 +17,14 @@ import './style.scss'
 
 interface PointHistory {
     id?: number | string
-    name?: string
-    category?: { id: number; name: string }
-    subCategory?: { id: number; name: string }
-    categoryId?: number
-}
-
-function cardView(cardData: PointHistory) {
-    return (
-        <>
-            <div className='card-view__frame--unit'>
-                <label>Catagory Name: </label>
-                <Link className='card-view__frame--unit--name' to={`/categories/detail/${cardData.category?.id}`}>
-                    {cardData.category?.name}
-                </Link>
-            </div>
-            <div className='card-view__frame--unit'>
-                <label>Sub-categories Name: </label>
-                <Link className='card-view__frame--unit--name' to={`/sub-categories/detail/${cardData.subCategory?.id}`}>
-                    {cardData.subCategory?.name}
-                </Link>
-            </div>
-        </>
-    )
+    time?: string
+    system?: string
+    deviceId?: number
+    customerId?: number
+    type?: string
+    amount?: number
+    lastPoint?: number
+    expiredTime?: any
 }
 
 const { RangePicker } = DatePicker;
