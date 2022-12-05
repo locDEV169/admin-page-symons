@@ -56,13 +56,6 @@ export function MainHeader() {
             </Menu.Item>
         </Menu>
     )
-    const showDrawer = () => {
-        setVisible(true)
-    }
-
-    const onClose = () => {
-        setVisible(false)
-    }
 
 
     return (
@@ -77,10 +70,10 @@ export function MainHeader() {
                         <Link to='/points-history'><span className="sider-span">Point History</span></Link>
                     </Menu.Item>
                     <Menu.Item key='2'>
-                        <Link to='/product'><span className="sider-span">Transaction History</span></Link>
+                        <Link to='/transaction-history'><span className="sider-span">Transaction History</span></Link>
                     </Menu.Item>
                     <Menu.Item key='3'>
-                        <Link to='/brand'>
+                        <Link to='/statistical'>
                             <span className='sider-span'>Statistical</span>
                         </Link>
                     </Menu.Item>

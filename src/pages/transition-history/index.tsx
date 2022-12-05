@@ -9,13 +9,12 @@ import { default as Select } from 'antd/es/select'
 import 'antd/es/select/style/index.css'
 import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
-import 'antd/es/tooltip/style/index.css'
 import React, { Fragment, LegacyRef, useRef } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { VButton } from 'vendor/pages'
 import './style.scss'
 
-interface PointHistory {
+interface TransactionHistory {
     id?: number | string
     name?: string
     category?: { id: number; name: string }
@@ -23,29 +22,10 @@ interface PointHistory {
     categoryId?: number
 }
 
-function cardView(cardData: PointHistory) {
-    return (
-        <>
-            <div className='card-view__frame--unit'>
-                <label>Catagory Name: </label>
-                <Link className='card-view__frame--unit--name' to={`/categories/detail/${cardData.category?.id}`}>
-                    {cardData.category?.name}
-                </Link>
-            </div>
-            <div className='card-view__frame--unit'>
-                <label>Sub-categories Name: </label>
-                <Link className='card-view__frame--unit--name' to={`/sub-categories/detail/${cardData.subCategory?.id}`}>
-                    {cardData.subCategory?.name}
-                </Link>
-            </div>
-        </>
-    )
-}
-
 const { RangePicker } = DatePicker;
 
 export default function ProductsPage() {
-    const POINTHISTORY_API = `points/point-history`
+    const TransactionHistory_API = `points/point-history`
     let history = useHistory()
     const [form] = Form.useForm()
     const params = new URLSearchParams(location.search)
@@ -62,29 +42,24 @@ export default function ProductsPage() {
     const formSearch: any = () => {
         return <Form onFinish={onSubmit} form={form} className='form-search'>
             <Form.Item
-                name='Sytems-conection'
+                name='Tx Hash'
+                className='form-search__deviceId'>
+                <Input placeholder='Tx Hash' />
+            </Form.Item>
+            <Form.Item
+                name='Type'
                 className='form-search__system'
             >
-                <Select placeholder="System connection" showSearch>
+                <Select placeholder="Type" showSearch>
                     <Select.Option value="2">Kaiin</Select.Option>
                     <Select.Option value="999">Kameiiten</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item
-                name='deviceId'
-                className='form-search__deviceId'>
-                <Input placeholder='Device ID' />
-            </Form.Item>
-            <Form.Item
-                name='customerID'
-                className='form-search__deviceId'>
-                <Input placeholder='Customer ID' />
-            </Form.Item>
-            <Form.Item
-                name='type'
+                name='Status'
                 className='form-search__system'
             >
-                <Select placeholder="Type" showSearch>
+                <Select placeholder="Status" showSearch>
                     <Select.Option value="init">Init</Select.Option>
                     <Select.Option value="grant">Grant</Select.Option>
                     <Select.Option value="attach">Attach</Select.Option>
@@ -109,44 +84,44 @@ export default function ProductsPage() {
         </Form>
     }
 
-    const columns: ColumnsType<PointHistory | object> = [
+    const columns: ColumnsType<TransactionHistory | object> = [
         {
-            title: 'Time',
+            title: 'BlockTime',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
         {
-            title: 'System',
+            title: 'Block Number',
             dataIndex: 'appId',
             key: 'appId',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
         {
-            title: 'Device ID',
+            title: 'Block Hash',
             dataIndex: 'deviceId',
             key: 'deviceId',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
         {
-            title: 'Customer Id',
+            title: 'Tx Hash',
             dataIndex: 'customerId',
             key: 'customerId',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
         {
-            title: 'Type',
+            title: 'To Address',
             dataIndex: 'type',
             key: 'type',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
@@ -154,32 +129,40 @@ export default function ProductsPage() {
             title: 'Amount',
             dataIndex: 'amount',
             key: 'amount',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
         {
-            title: 'Last point',
+            title: 'Fee',
             dataIndex: 'balance',
             key: 'balance',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
         {
-            title: 'Expiration date',
+            title: 'Type',
             dataIndex: 'name',
             key: 'name',
-            render: function nameCell(name: string, record: PointHistory) {
+            render: function nameCell(name: string, record: TransactionHistory) {
                 return <Link to={`products/detail/${record.id}`}>{name}</Link>
             }
         },
+        {
+            title: 'Status',
+            dataIndex: 'balance',
+            key: 'balance',
+            render: function nameCell(name: string, record: TransactionHistory) {
+                return <Link to={`products/detail/${record.id}`}>{name}</Link>
+            }
+        }
     ]
     return (
         <Fragment>
             <div className='point-history'>
                 <div className='point-history__title'>
-                    Points history
+                    Transaction history
                 </div>
                 {formSearch()}
                 <Table columns={columns} />
