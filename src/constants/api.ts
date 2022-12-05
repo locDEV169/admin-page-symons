@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-const API_URL = process.env.API_URL || 'http://127.0.0.1:3000'
+const API_URL = process.env.API_URL || 'http://localhost:3001'
 export const URL_UPLOAD = API_URL + '/uploads/'
 
 const getToken = Cookies.get('token')

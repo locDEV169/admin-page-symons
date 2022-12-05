@@ -3,6 +3,7 @@ import { default as Breadcrumb } from 'antd/es/breadcrumb'
 import 'antd/es/breadcrumb/style/index.css'
 import { default as React, Fragment, useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
+import './style.scss'
 
 export function MainBreadcrumb() {
     const [paths, setPaths] = useState<{ key: string; title: string }[]>([])
@@ -24,14 +25,12 @@ export function MainBreadcrumb() {
     }, [history.location])
 
     return (
-        <Breadcrumb separator='' style={{ display: 'block', margin: '24px 16px 0' }}>
+        <Breadcrumb separator='' style={{ display: 'block', margin: '24px 16px 0' }} className='breadcrumb'>
             {paths.map((item, index) => {
-                return (
-                    <Breadcrumb.Item key={item.key}>
-                        <BreadcrumbItem title={item.title} route={item.key} last={index === paths.length - 1} />
-                        {index < paths.length - 1 && <Breadcrumb.Separator>{'>'}</Breadcrumb.Separator>}
-                    </Breadcrumb.Item>
-                )
+
+                return <Breadcrumb.Item key={item.key}>
+                    <BreadcrumbItem title={item.title} route={item.key} last={index === paths.length - 1} />
+                </Breadcrumb.Item>
             })}
         </Breadcrumb>
     )
@@ -39,5 +38,6 @@ export function MainBreadcrumb() {
 
 function BreadcrumbItem({ title, route, last }: { title: string; route: string; last: boolean }) {
     const titleElement = <span style={{ textTransform: 'capitalize' }}>{title}</span>
-    return <Fragment>{last ? titleElement : <Link to={route}>{title ? titleElement : <HomeOutlined />}</Link>}</Fragment>
+
+    return <Fragment>{last && <Link to={route}>{title ? titleElement : <HomeOutlined />}</Link>}</Fragment>
 }

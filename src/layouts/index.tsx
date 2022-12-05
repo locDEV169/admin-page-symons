@@ -1,7 +1,6 @@
 import 'antd/es/layout/style/index.css'
 import { default as React, ReactNode } from 'react'
 import { VContent, VLayout } from 'vendor/layout'
-import { MainBreadcrumb } from './breadcrumb'
 import { MainHeader } from './header'
 import './style.css'
 
@@ -10,8 +9,8 @@ export function MainLayout({ children }: { children: ReactNode }) {
     <VLayout style={{ height: 'max-content' }}>
       <VLayout className='site-layout' style={{ height: '100%' }}>
         <MainHeader />
-        <MainBreadcrumb />
-        <VContent className='site-layout-background' style={{ margin: '24px 16px', padding: 24 }}>
+        {/* <MainBreadcrumb /> */}
+        <VContent className='site-layout-background' style={{ padding: 24 }}>
           {children}
         </VContent>
       </VLayout>
