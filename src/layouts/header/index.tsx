@@ -1,29 +1,28 @@
 import {
     DownOutlined,
     HomeOutlined,
-    LoginOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    PartitionOutlined,
+    LoginOutlined, PartitionOutlined,
     ShoppingCartOutlined,
     TableOutlined,
     UserOutlined
-} from '@ant-design/icons'
-import { default as Drawer } from 'antd/es/drawer'
-import 'antd/es/drawer/style/index.css'
-import { default as Dropdown } from 'antd/es/dropdown'
-import 'antd/es/dropdown/style/index.css'
-import { default as Menu } from 'antd/es/menu'
-import 'antd/es/menu/style/index.css'
-import SubMenu from 'antd/es/menu/SubMenu'
-import debounce from 'debounce'
-import Cookies from 'js-cookie'
-import { default as React, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link, useLocation } from 'react-router-dom'
-import { VHeader, VSider } from 'vendor/layout'
-import { selectCollapsed, toogleSider } from '../../store/slices/app'
-import '../header/header.scss'
+} from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { default as Drawer } from 'antd/es/drawer';
+import 'antd/es/drawer/style/index.css';
+import { default as Dropdown } from 'antd/es/dropdown';
+import 'antd/es/dropdown/style/index.css';
+import { Header } from 'antd/es/layout/layout';
+import { default as Menu } from 'antd/es/menu';
+import 'antd/es/menu/style/index.css';
+import SubMenu from 'antd/es/menu/SubMenu';
+import debounce from 'debounce';
+import Cookies from 'js-cookie';
+import { default as React, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
+import { VHeader, VSider } from 'vendor/layout';
+import { selectCollapsed, toogleSider } from '../../store/slices/app';
+import '../header/header.scss';
 
 function useWindowSize(delay = 100) {
     const [size, setSize] = useState<number>(window.innerWidth)
@@ -132,20 +131,35 @@ export function MainHeader() {
         )
     }
 
+    const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
+        key,
+        label: `nav ${key}`,
+    }));
+
     return (
         <VHeader className='site-layout-background' style={{ padding: 0 }} id='header-background'>
-            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+            {/* {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                 className: 'trigger',
                 onClick: width > 468 ? toggle : showDrawer
-            })}
-            {getDrawer()}
-            <h3 id='nav-name'>
-                <Dropdown overlay={item}>
-                    <a className='ant-dropdown-link' onClick={(e) => e.preventDefault()}>
-                        Hi,{getUserName} <DownOutlined />
-                    </a>
-                </Dropdown>
-            </h3>
+            })} */}
+            <div className="nav-left">.
+
+                <h3 id='nav-name'>Point History</h3>
+                <h3 id='nav-name'>Transaction History</h3>
+                <h3 id='nav-name'>Statistical</h3>
+                <Header className="header">
+                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} items={itemsMenu} />
+                </Header>
+            </div>
+            <div className="nav-right">
+                <h3 id='nav-name'>
+                    <Dropdown overlay={item}>
+                        <a className='ant-dropdown-link' onClick={(e) => e.preventDefault()}>
+                            Hi,{getUserName} <DownOutlined />
+                        </a>
+                    </Dropdown>
+                </h3>
+            </div>
         </VHeader>
     )
 }
