@@ -1,3 +1,4 @@
+import { notification } from 'antd'
 import { default as DatePicker } from 'antd/es/date-picker'
 import 'antd/es/date-picker/style/index.css'
 import { default as Form } from 'antd/es/form'
@@ -5,13 +6,15 @@ import 'antd/es/form/style/index.css'
 import { default as Input } from 'antd/es/input'
 import 'antd/es/input-number/style/index.css'
 import 'antd/es/input/style/index.css'
+import 'antd/es/pagination/style/index.css'
 import { default as Radio, RadioChangeEvent } from 'antd/es/radio'
 import 'antd/es/radio/style/index.css'
 import 'antd/es/select/style/index.css'
 import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
-import React, { Fragment, LegacyRef, useRef, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import api from 'constants/api'
+import React, { Fragment, LegacyRef, useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { VButton } from 'vendor/pages'
 import './style.scss'
 
@@ -20,17 +23,21 @@ interface Statistical {
     storeId?: number | string
     customerId?: number | string
     lastPoint: number
+    statistical?: any
+    count?: number
 }
 
 const { RangePicker } = DatePicker;
 
-export default function ProductsPage() {
-    const Statistical_API = `points/point-history`
+export default function StatisticalPage() {
+    const Statistical_API = `points/statistical`
     let history = useHistory()
     const [form] = Form.useForm()
     const params = new URLSearchParams(location.search)
     const keyword: LegacyRef<Input> = useRef(null)
     const [checkStatus, setCheckStatus] = useState<number>(1)
+    const [status, setStatus] = useState<string>('store')
+    const [dataStatistical, setDataStatistical] = useState<Statistical[]>()
 
     const onSubmit = (values: any) => {
         console.log(values);
@@ -39,6 +46,32 @@ export default function ProductsPage() {
     const onOk = (value: any) => {
         console.log('onOk: ', value);
     };
+
+    async function getDataList() {
+        try {
+            const response = await api.get(`${Statistical_API}/${checkStatus === 1 ? 'store' : 'member'}`)
+            console.log(`${Statistical_API}/${status}`);
+            const { statistical: dataStatisticalHistory } = response.data
+            console.log(dataStatisticalHistory, response.data)
+            setDataStatistical(dataStatisticalHistory)
+        } catch (err) {
+            notification.error({
+                message: 'Error is occured',
+                description: 'No data found.'
+            })
+        }
+    }
+    console.log(dataStatistical, checkStatus);
+
+    useEffect(() => {
+        getDataList()
+        return checkStatus === 1 ? setStatus('store') : setStatus('member')
+    }, [])
+
+    useEffect(() => {
+        getDataList()
+        return checkStatus === 1 ? setStatus('store') : setStatus('member')
+    }, [checkStatus])
 
     const formSearch: any = (value: number) => {
         return <Form onFinish={onSubmit} form={form} className='form-search'>
@@ -66,38 +99,26 @@ export default function ProductsPage() {
     const columnsCustomerID: ColumnsType<Statistical | object> = [
         {
             title: 'Customer ID',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            render: function nameCell(name: string, record: any) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'customerId',
+            key: 'customerId',
         },
         {
             title: 'Lastest Point',
-            dataIndex: 'appId',
-            key: 'appId',
-            render: function nameCell(name: string, record: any) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'balance',
+            key: 'balance',
         },
     ]
 
     const columnsStoreID: ColumnsType<Statistical | object> = [
         {
             title: 'Store ID',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            render: function nameCell(name: string, record: any) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'deviceId',
+            key: 'deviceId',
         },
         {
             title: 'Lastest Point',
-            dataIndex: 'appId',
-            key: 'appId',
-            render: function nameCell(name: string, record: any) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'balance',
+            key: 'balance',
         },
     ]
 
@@ -119,7 +140,10 @@ export default function ProductsPage() {
                             <Radio value={2}>Customer ID</Radio>
                         </Radio.Group>
                     </div>
-                    <Table columns={checkStatus === 1 ? columnsStoreID : columnsCustomerID} />
+                    <Table
+                        columns={checkStatus === 1 ? columnsStoreID : columnsCustomerID}
+                        dataSource={dataStatistical}
+                    />
                 </div>
 
             </div>
