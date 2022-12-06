@@ -31,7 +31,7 @@ export default function LoginPage() {
     const onFinish = (values: User) => {
         api.post('/auth/login', values)
             .then((res: LoginType) => {
-                setCookie("username", values.username, 86400)
+                setCookie("username", values.username, 31536000000)
                 window.location.href = '/points-history'
             })
             .catch((errors) => handleError(errors))

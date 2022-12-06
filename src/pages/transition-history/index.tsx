@@ -5,12 +5,17 @@ import 'antd/es/form/style/index.css'
 import { default as Input } from 'antd/es/input'
 import 'antd/es/input-number/style/index.css'
 import 'antd/es/input/style/index.css'
+import { default as notification } from 'antd/es/notification'
+import 'antd/es/notification/style/index.css'
+import 'antd/es/pagination/style/index.css'
 import { default as Select } from 'antd/es/select'
 import 'antd/es/select/style/index.css'
 import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
-import React, { Fragment, LegacyRef, useRef } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import api from 'constants/api'
+import moment from 'moment'
+import React, { Fragment, LegacyRef, useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { VButton } from 'vendor/pages'
 import './style.scss'
 
@@ -25,16 +30,18 @@ interface TransactionHistory {
     fee?: number
     type?: string
     status?: string
+    count?: number
 }
 
 const { RangePicker } = DatePicker;
 
-export default function ProductsPage() {
-    const TransactionHistory_API = `points/point-history`
+export default function TranisactionHistoyPage() {
+    const TransactionHistory_API = `points/transaction-history`
     let history = useHistory()
     const [form] = Form.useForm()
     const params = new URLSearchParams(location.search)
     const keyword: LegacyRef<Input> = useRef(null)
+    const [dataTransactionHistory, setDataTransactionHistor] = useState<any>()
 
     const onSubmit = (values: any) => {
         console.log(values);
@@ -43,6 +50,29 @@ export default function ProductsPage() {
     const onOk = (value: any) => {
         console.log('onOk: ', value);
     };
+
+    async function getDataList() {
+        try {
+            const response = await api.get(`${TransactionHistory_API}`)
+            const { transactionHistory: dataTransactionHistory } = response.data
+            // console.log(dataTransactionHistory)
+            setDataTransactionHistor(dataTransactionHistory)
+            // const { totalRecords: totalRecords } = response.data.data
+            // const response2 = await api.get(`categories?limit=${totalRecords}`)
+            // const { pointHistory: dataCategories } = response2.data
+            // setData((prev) => ({ ...prev, dataCategories }))
+        } catch (err) {
+            notification.error({
+                message: 'Error is occured',
+                description: 'No data found.'
+            })
+        }
+    }
+    console.log(dataTransactionHistory);
+
+    useEffect(() => {
+        getDataList()
+    }, [])
 
     const formSearch: any = () => {
         return <Form onFinish={onSubmit} form={form} className='form-search'>
@@ -94,72 +124,67 @@ export default function ProductsPage() {
             title: 'BlockTime',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
+            render: function nameCell(name: string) {
+                const time = moment(name).format("YYYY/MM/DD HH:MM:SS")
+                return (
+                    <div>
+                        {time.split(" ").map((line, index) => (
+                            <React.Fragment key={index}>
+                                {line}
+                                <br />
+                            </React.Fragment>
+                        ))}
+                    </div>
+                );
             }
         },
         {
             title: 'Block Number',
-            dataIndex: 'appId',
-            key: 'appId',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'blockNumber',
+            key: 'blockNumber',
         },
         {
             title: 'Block Hash',
-            dataIndex: 'deviceId',
-            key: 'deviceId',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
+            dataIndex: 'blockHash',
+            key: 'blockHash',
+            render: function nameCell(name: string, record: any) {
+                return <div className='text'>{name}</div>
             }
         },
         {
             title: 'Tx Hash',
-            dataIndex: 'customerId',
+            dataIndex: 'blockNumber',
             key: 'customerId',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'To Address',
-            dataIndex: 'type',
-            key: 'type',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
+            dataIndex: 'toAddress',
+            key: 'toAddress',
+            render: function nameCell(name: string, record: any) {
+                return <div className='text'>{name}</div>
             }
         },
         {
             title: 'Amount',
             dataIndex: 'amount',
             key: 'amount',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'Fee',
-            dataIndex: 'balance',
-            key: 'balance',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'fee',
+            key: 'fee',
         },
         {
             title: 'Type',
-            dataIndex: 'name',
-            key: 'name',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'type',
+            key: 'type',
         },
         {
             title: 'Status',
-            dataIndex: 'balance',
-            key: 'balance',
-            render: function nameCell(name: string, record: TransactionHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
+            dataIndex: 'status',
+            key: 'status',
+            render: function nameCell(name: string, record: any) {
+                return <div style={{ textTransform: 'capitalize' }}>{name}</div>
             }
         }
     ]
@@ -170,7 +195,7 @@ export default function ProductsPage() {
                     Transaction history
                 </div>
                 {formSearch()}
-                <Table columns={columns} />
+                <Table columns={columns} dataSource={dataTransactionHistory} />
             </div>
         </Fragment>
     )
