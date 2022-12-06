@@ -4,8 +4,7 @@ import { default as Input } from 'antd/es/input'
 import 'antd/es/input/style/index.css'
 import { default as message } from 'antd/es/message'
 import 'antd/es/message/style/index.css'
-import Axios from 'axios'
-import API_URL from 'constants/api'
+import api from 'constants/api'
 import Cookies from 'js-cookie'
 import { default as React } from 'react'
 import { VButton } from 'vendor/pages'
@@ -26,23 +25,16 @@ interface ErrorType {
     }
 }
 
-const api = Axios.create({
-    baseURL: `${API_URL}`,
-})
-
-
 export default function LoginPage() {
     const [form] = Form.useForm();
 
     const onFinish = (values: User) => {
-        setCookie("username", values.username, 14515200000)
-        window.location.href = '/points-history'
-        // api.post('/auth/login', values)
-        //   .then((res: LoginType) => {
-        //     setCookie("username", res.data.data.username, res.data.data.expireIn)
-        //     window.location.href = '/'
-        //   })
-        //   .catch((errors) => handleError(errors))
+        api.post('/auth/login', values)
+            .then((res: LoginType) => {
+                setCookie("username", values.username, 86400)
+                window.location.href = '/points-history'
+            })
+            .catch((errors) => handleError(errors))
     };
 
     const handleError = (err: ErrorType) => {

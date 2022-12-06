@@ -5,13 +5,16 @@ import 'antd/es/form/style/index.css'
 import { default as Input } from 'antd/es/input'
 import 'antd/es/input-number/style/index.css'
 import 'antd/es/input/style/index.css'
+import { default as notification } from 'antd/es/notification'
+import 'antd/es/notification/style/index.css'
 import { default as Select } from 'antd/es/select'
 import 'antd/es/select/style/index.css'
 import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
 import 'antd/es/tooltip/style/index.css'
-import React, { Fragment, LegacyRef, useRef } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import api from 'constants/api'
+import React, { Fragment, LegacyRef, useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { VButton } from 'vendor/pages'
 import './style.scss'
 
@@ -25,6 +28,21 @@ interface PointHistory {
     amount?: number
     lastPoint?: number
     expiredTime?: any
+    pointLog?: [{}]
+}
+interface PointLog {
+    id?: string
+    createdAt?: string | Date
+    expireAt?: string | Date
+    system?: string
+    deviceId?: number
+    customerId?: number
+    type?: string
+    amount?: number
+    balance?: number
+    lastPoint?: number
+    expiredTime?: Date
+    appId: number
 }
 
 const { RangePicker } = DatePicker;
@@ -35,6 +53,7 @@ export default function ProductsPage() {
     const [form] = Form.useForm()
     const params = new URLSearchParams(location.search)
     const keyword: LegacyRef<Input> = useRef(null)
+    const [data, setData] = useState<any>([])
 
     const onSubmit = (values: any) => {
         console.log(values);
@@ -43,6 +62,48 @@ export default function ProductsPage() {
     const onOk = (value: any) => {
         console.log('onOk: ', value);
     };
+
+    async function getDataList() {
+        try {
+            const response = await api.get(`${POINTHISTORY_API}`)
+            const { pointHistory: dataPointHistory } = response.data
+            console.log(dataPointHistory)
+            convertData(dataPointHistory)
+            // const { totalRecords: totalRecords } = response.data.data
+            // const response2 = await api.get(`categories?limit=${totalRecords}`)
+            // const { pointHistory: dataCategories } = response2.data
+            // setData((prev) => ({ ...prev, dataCategories }))
+        } catch (err) {
+            notification.error({
+                message: 'Error is occured',
+                description: 'No data found.'
+            })
+        }
+    }
+
+    useEffect(() => {
+        getDataList()
+    }, [])
+
+    const convertData = (values: any) => {
+        values.map((item: any, key: number) => item.pointLog.map((itemPointLog: PointLog) =>
+            setData((prev) =>
+                [...prev, {
+                    itemPointLog,
+                    customerId: item.customerId,
+                    type: itemPointLog.type,
+                    createdAt: itemPointLog.createdAt,
+                    amount: itemPointLog.amount,
+                    balance: itemPointLog.balance,
+                    deviceId: itemPointLog.deviceId,
+                    expireAt: item.expireAt,
+                }
+                ]
+            )
+        )
+        )
+    }
+    console.log(data);
 
     const formSearch: any = () => {
         return <Form onFinish={onSubmit} form={form} className='form-search'>
@@ -99,65 +160,41 @@ export default function ProductsPage() {
             title: 'Time',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'System',
             dataIndex: 'appId',
             key: 'appId',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'Device ID',
             dataIndex: 'deviceId',
             key: 'deviceId',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'Customer Id',
             dataIndex: 'customerId',
             key: 'customerId',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'Amount',
             dataIndex: 'amount',
             key: 'amount',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'Last point',
             dataIndex: 'balance',
             key: 'balance',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
         },
         {
             title: 'Expiration date',
-            dataIndex: 'name',
-            key: 'name',
-            render: function nameCell(name: string, record: PointHistory) {
-                return <Link to={`products/detail/${record.id}`}>{name}</Link>
-            }
+            dataIndex: 'expireAt',
+            key: 'expireAt',
         },
     ]
     return (
@@ -167,7 +204,7 @@ export default function ProductsPage() {
                     Points history
                 </div>
                 {formSearch()}
-                <Table columns={columns} />
+                <Table columns={columns} dataSource={data} />
             </div>
         </Fragment>
     )
