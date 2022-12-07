@@ -15,8 +15,9 @@ import 'antd/es/table/style/index.css'
 import 'antd/es/tooltip/style/index.css'
 import api from 'constants/api'
 import moment from 'moment'
-import React, { Fragment, LegacyRef, useEffect, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { objectToSearchString } from 'serialize-query-params'
 import { VButton } from 'vendor/pages'
 import './style.scss'
 
@@ -32,6 +33,12 @@ interface PointHistory {
     expiredTime?: any
     pointLog?: PointLog[]
     count?: number
+}
+interface ISearch {
+    appId: number | string,
+    deviceId: string,
+    type: string,
+    customerId: number,
 }
 interface PointLog {
     id?: string
@@ -54,22 +61,46 @@ export default function ProductsPage() {
     const POINTHISTORY_API = `points/point-history`
     let history = useHistory()
     const [form] = Form.useForm()
-    const params = new URLSearchParams(location.search)
-    const keyword: LegacyRef<Input> = useRef(null)
     const [dataPointLog, setDataPointLog] = useState<any>([])
-    const [startTime, setStartTime] = useState<Date>()
-    const [endTime, setEndTime] = useState<Date>()
+    const [startTime, setStartTime] = useState<Date | String>()
+    const [endTime, setEndTime] = useState<Date | String>()
 
-    async function getDataList() {
+    async function getDataList(query?: string) {
+        const covertQuery = query?.split('+').join('%20')
+
         try {
-            const response = await api.get(`${POINTHISTORY_API}`)
-            const { pointHistory: dataPointHistory } = response.data
-            convertData(dataPointHistory)
+            if (!query) {
+                const response = await api.get(`${POINTHISTORY_API}`)
+                const { pointHistory: dataPointHistory } = response.data
+                convertData(dataPointHistory)
+            } else {
+                const response = await api.get(`${POINTHISTORY_API}?${covertQuery}`)
+                const { pointHistory: dataPointHistory } = response.data
+                const dataArray: any = []
+                dataPointHistory.map(item =>
+                    item.pointLog.map(itemLog => {
+                        dataArray.push({
+                            itemLog,
+                            customerId: item.customerId,
+                            type: itemLog.type,
+                            createdAt: moment(itemLog.createdAt).format("YYYY/MM/DD HH:MM:SS"),
+                            amount: itemLog.amount,
+                            balance: itemLog.balance,
+                            deviceId: itemLog.deviceId,
+                            appId: formatApp(itemLog.appId),
+                            expireAt: moment(item.expireAt).format("YYYY/MM/DD HH:MM:SS"),
+                        })
+                    })
+                )
+                setDataPointLog(dataArray)
+            }
+
         } catch (err) {
             notification.error({
                 message: 'Error is occured',
                 description: 'No data found.'
             })
+            setDataPointLog([])
         }
     }
 
@@ -77,7 +108,7 @@ export default function ProductsPage() {
         getDataList()
     }, [])
 
-    const onChange = (value, dateString) => {
+    const onChange = (value, dateString: [string, string]) => {
         setStartTime(dateString[0])
         setEndTime(dateString[1])
     }
@@ -86,44 +117,32 @@ export default function ProductsPage() {
         console.log('onOk: ', value);
     };
 
-    const onSearchClick = async (value: any) => {
-        console.log(value);
-        const filter: Record<string, string> = {
-            appId: `${value.appId}`,
-            deviceId: `${value.deviceId}`,
-            type: `${value.type}`,
-            customerId: `${value.customerId}`,
-        }
-        const params = new URLSearchParams(filter)
-        history.replace({ pathname: location.pathname, search: params.toString() })
+    const onSearchClick = async (value: ISearch) => {
+        const startTimeDate = startTime === '' ? null : startTime
+        const endTimeDate = endTime === '' ? null : endTime
 
-        const response = await api.get(`${POINTHISTORY_API}`, value)
-        console.log(response?.data?.pointHistory);
-        response.data.pointHistory.map((item: any) => item.pointLog.map((itemPointLog: PointLog) =>
-            setDataPointLog((prev) =>
-                [...prev, {
-                    itemPointLog,
-                    customerId: item.customerId,
-                    type: itemPointLog.type,
-                    createdAt: moment(itemPointLog.createdAt).format("YYYY/MM/DD HH:MM:SS"),
-                    amount: itemPointLog.amount,
-                    balance: itemPointLog.balance,
-                    deviceId: itemPointLog.deviceId,
-                    appId: formatApp(itemPointLog.appId),
-                    expireAt: moment(item.expireAt).format("YYYY/MM/DD HH:MM:SS"),
-                }
-                ]
-            )
-        )
-        )
+        const filter: Record<string, string | any> = {
+            appId: value.appId,
+            deviceId: value.deviceId,
+            type: value.type,
+            customerId: value.customerId,
+            startTime: startTimeDate,
+            endTime: endTimeDate
+        }
+
+        const covertParams = objectToSearchString(filter)
+        const covertQuery = covertParams?.split('+').join('%20')
+        history.replace({ pathname: location.pathname, search: covertQuery })
+
+        getDataList(covertParams)
     }
 
-    const onSearch = async (values: any) => {
+    const onSearch = async (values: ISearch) => {
         onSearchClick(values)
     }
 
-    const convertData = (values: any) => {
-        values.map((item: any) => item.pointLog.map((itemPointLog: PointLog) =>
+    const convertData = (values: PointHistory[]) => {
+        values.map((item: PointHistory | any) => item.pointLog.map((itemPointLog: PointLog) =>
             setDataPointLog((prev) =>
                 [...prev, {
                     itemPointLog,
@@ -185,7 +204,7 @@ export default function ProductsPage() {
                     <Select.Option value="grant">Grant</Select.Option>
                     <Select.Option value="attach">Attach</Select.Option>
                     <Select.Option value="exchange">Exchange</Select.Option>
-                    <Select.Option value="dettach">Dettach</Select.Option>
+                    <Select.Option value="detach">Detach</Select.Option>
                     <Select.Option value="cansel">Cancel</Select.Option>
                 </Select>
             </Form.Item>
@@ -195,6 +214,7 @@ export default function ProductsPage() {
                     format="YYYY-MM-DD HH:mm"
                     onChange={onChange}
                     onOk={onOk}
+                    placeholder={["Start Time", "End Time"]}
                 />
             </Form.Item>
             <Form.Item>
