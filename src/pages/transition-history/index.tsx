@@ -105,7 +105,6 @@ export default function TranisactionHistoyPage() {
 
         const covertParams = objectToSearchString(filter)
         const covertQuery = covertParams?.split('+').join('%20')
-        console.log('covertQuery ', covertQuery);
 
         history.replace({ pathname: location.pathname, search: covertQuery })
 

@@ -16,8 +16,10 @@ import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
 import 'antd/lib/modal/style/index.css'
 import api from 'constants/api'
+import _ from 'lodash'
 import React, { Fragment, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { objectToSearchString } from 'serialize-query-params'
 import { VButton } from 'vendor/pages'
 import './style.scss'
 
@@ -38,14 +40,13 @@ export default function StatisticalPage() {
     const [form] = Form.useForm()
     const [checkStatus, setCheckStatus] = useState<number>(1)
     const [status, setStatus] = useState<string>('store')
-    const [dataStatistical, setDataStatistical] = useState<Statistical[]>()
+    const [dataStatistical, setDataStatistical] = useState<any[]>()
     const [dataDevice, setDataDevice] = useState<any>()
     const [open, setOpen] = useState<Boolean>(false);
-    const [cid, setCid] = useState<any>();
+    const [cid, setCid] = useState<any>()
+    const [startTime, setStartTime] = useState<Date | String>()
+    const [endTime, setEndTime] = useState<Date | String>()
 
-    const onSubmit = (values: any) => {
-        console.log(values);
-    }
 
     const onOk = (value: any) => {
         console.log('onOk: ', value);
@@ -56,6 +57,18 @@ export default function StatisticalPage() {
             const response = await api.get(`${Statistical_API}/${checkStatus === 1 ? 'store' : 'member'}`)
             const { statistical: dataStatisticalHistory } = response.data
             setDataStatistical(dataStatisticalHistory)
+            if (!query) {
+                const response = await api.get(`${Statistical_API}/${checkStatus === 1 ? 'store' : 'member'}`)
+                const { statistical: dataStatisticalHistory } = response.data
+                setDataStatistical(dataStatisticalHistory)
+            }
+            else {
+                console.log(`${Statistical_API}/${checkStatus === 1 ? 'store' : 'member'}?${query}`);
+
+                const response = await api.get(`${Statistical_API}/${checkStatus === 1 ? 'store' : 'member'}?${query}`)
+                const { statistical: dataStatisticalHistory } = response.data
+                setDataStatistical(dataStatisticalHistory)
+            }
         } catch (err) {
             notification.error({
                 message: 'Error is occured',
@@ -75,7 +88,7 @@ export default function StatisticalPage() {
     }, [checkStatus])
 
     const formSearch: any = (value: number) => {
-        return <Form onFinish={onSubmit} form={form} className='form-search'>
+        return <Form onFinish={onSearch} form={form} className='form-search'>
             <Form.Item
                 name={value === 1 ? 'storeId' : 'customerId'}
                 className='form-search__deviceId'>
@@ -298,12 +311,33 @@ export default function StatisticalPage() {
     ]
 
     const convertData = (value, id) => {
-        value.map((item) => {
-            console.log(item.customerId, 'cid', cid, 'query', item.customerId === id);
-            console.log(item);
+        // value.map((item) => {
+        //     console.log(item.customerId, 'cid', cid, 'query', item.customerId === id);
+        //     console.log(item);
 
+        // })
+        let rst = {}
+        dataStatistical?.map((item) => {
+            console.log(item);
+            _.forEach(item, (value, key) => {
+                if (key.includes('Count')) {
+                    Object.keys(value).forEach(v => {
+                        _.setWith(rst, [v, key], [value, key])
+                    })
+                }
+            })
         })
+
+        console.log('rst', rst);
+        // Object.keys(rst).map((item, index) => {
+        //     console.log(item, index);
+        //     console.log(item['grantCount']);
+
+        // })
+        setDataDevice(rst)
     }
+    console.log(dataStatistical);
+    console.log(dataDevice);
 
     const columnsDeviceId: ColumnsType<Statistical | object> = [
         {
@@ -375,6 +409,29 @@ export default function StatisticalPage() {
         setCid(value.customerId)
         checkStatus === 1 ? setOpen(false) : setOpen(!open)
         convertData(dataStatistical, value.customerId)
+    }
+
+    const onSearchClick = async (value: any) => {
+        const startTimeDate = startTime === '' ? null : startTime
+        const endTimeDate = endTime === '' ? null : endTime
+        const id = value.storeId === '' ? null : value.storeId
+
+        const filter: Record<string, string | any> = {
+            id: id,
+            startTime: startTimeDate,
+            endTime: endTimeDate
+        }
+
+        const covertParams = objectToSearchString(filter)
+        const covertQuery = covertParams?.split('+').join('%20')
+
+        history.replace({ pathname: location.pathname, search: covertQuery })
+
+        getDataList(covertParams)
+    }
+
+    const onSearch = async (values: any) => {
+        onSearchClick(values)
     }
 
     return (

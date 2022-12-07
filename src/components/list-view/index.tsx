@@ -1,6 +1,5 @@
 import { default as Form } from 'antd/es/form'
 import 'antd/es/form/style/index.css'
-import { default as Input } from 'antd/es/input'
 import 'antd/es/input/style/index.css'
 import { default as notification } from 'antd/es/notification'
 import 'antd/es/notification/style/css'
