@@ -8,14 +8,17 @@ import 'antd/es/input/style/index.css'
 import { default as notification } from 'antd/es/notification'
 import 'antd/es/notification/style/index.css'
 import 'antd/es/pagination/style/index.css'
+import { default as Popover } from 'antd/es/popover'
+import 'antd/es/popover/style/index.css'
 import { default as Select } from 'antd/es/select'
 import 'antd/es/select/style/index.css'
 import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
 import api from 'constants/api'
 import moment from 'moment'
-import React, { Fragment, LegacyRef, useEffect, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { objectToSearchString } from 'serialize-query-params'
 import { VButton } from 'vendor/pages'
 import './style.scss'
 
@@ -32,35 +35,46 @@ interface TransactionHistory {
     status?: string
     count?: number
 }
+interface ISearch {
+    type: string,
+    txHash: string,
+    status: string,
+}
 
 const { RangePicker } = DatePicker;
 
 export default function TranisactionHistoyPage() {
     const TransactionHistory_API = `points/transaction-history`
-    let history = useHistory()
     const [form] = Form.useForm()
-    const params = new URLSearchParams(location.search)
-    const keyword: LegacyRef<Input> = useRef(null)
+    let history = useHistory()
     const [dataTransactionHistory, setDataTransactionHistor] = useState<any>()
+    const [startTime, setStartTime] = useState<Date | String>()
+    const [endTime, setEndTime] = useState<Date | String>()
 
-    const onSubmit = (values: any) => {
-        console.log(values);
+    const onChange = (value, dateString: [string, string]) => {
+        setStartTime(dateString[0])
+        setEndTime(dateString[1])
     }
 
     const onOk = (value: any) => {
         console.log('onOk: ', value);
     };
 
-    async function getDataList() {
+    async function getDataList(query?: string) {
+        const covertQuery = query?.split('+').join('%20')
+        console.log(covertQuery);
+
         try {
-            const response = await api.get(`${TransactionHistory_API}`)
-            const { transactionHistory: dataTransactionHistory } = response.data
-            // console.log(dataTransactionHistory)
-            setDataTransactionHistor(dataTransactionHistory)
-            // const { totalRecords: totalRecords } = response.data.data
-            // const response2 = await api.get(`categories?limit=${totalRecords}`)
-            // const { pointHistory: dataCategories } = response2.data
-            // setData((prev) => ({ ...prev, dataCategories }))
+            if (!query) {
+                const response = await api.get(`${TransactionHistory_API}`)
+                const { transactionHistory: dataTransactionHistory } = response.data
+                setDataTransactionHistor(dataTransactionHistory)
+            }
+            else {
+                const response = await api.get(`${TransactionHistory_API}?${query}`)
+                const { transactionHistory: dataTransactionHistory } = response.data
+                setDataTransactionHistor(dataTransactionHistory)
+            }
         } catch (err) {
             notification.error({
                 message: 'Error is occured',
@@ -74,40 +88,66 @@ export default function TranisactionHistoyPage() {
         getDataList()
     }, [])
 
+    const onSearchClick = async (value: ISearch) => {
+        console.log(value);
+
+        const startTimeDate = startTime === '' ? null : startTime
+        const endTimeDate = endTime === '' ? null : endTime
+        const txHashSearch = value.txHash === '' ? null : value.txHash
+
+        const filter: Record<string, string | any> = {
+            txhash: txHashSearch,
+            type: value.type,
+            status: value.status,
+            startTime: startTimeDate,
+            endTime: endTimeDate
+        }
+
+        const covertParams = objectToSearchString(filter)
+        const covertQuery = covertParams?.split('+').join('%20')
+        console.log('covertQuery ', covertQuery);
+
+        history.replace({ pathname: location.pathname, search: covertQuery })
+
+        getDataList(covertParams)
+    }
+
+    const onSearch = async (values: any) => {
+        onSearchClick(values)
+    }
+
+
     const formSearch: any = () => {
-        return <Form onFinish={onSubmit} form={form} className='form-search'>
+        return <Form onFinish={onSearch} form={form} className='form-search'>
             <Form.Item
-                name='Tx Hash'
+                name='txHash'
                 className='form-search__deviceId'>
                 <Input placeholder='Tx Hash' />
             </Form.Item>
             <Form.Item
-                name='Type'
+                name='type'
                 className='form-search__system'
             >
                 <Select placeholder="Type" showSearch>
-                    <Select.Option value="2">Kaiin</Select.Option>
-                    <Select.Option value="999">Kameiiten</Select.Option>
+                    <Select.Option value="mint">Mint</Select.Option>
+                    <Select.Option value="burn">Burn</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item
-                name='Status'
+                name='status'
                 className='form-search__system'
             >
                 <Select placeholder="Status" showSearch>
-                    <Select.Option value="init">Init</Select.Option>
-                    <Select.Option value="grant">Grant</Select.Option>
-                    <Select.Option value="attach">Attach</Select.Option>
-                    <Select.Option value="exchange">Exchange</Select.Option>
-                    <Select.Option value="dettach">Dettach</Select.Option>
-                    <Select.Option value="cancel">Cancel</Select.Option>
+                    <Select.Option value="submitted">Submitted</Select.Option>
+                    <Select.Option value="confirmed">Comfirmed</Select.Option>
+                    <Select.Option value="failed">Failed</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item>
                 <RangePicker
                     showTime={{ format: 'HH:mm' }}
                     format="YYYY-MM-DD HH:mm"
-                    // onChange={onChange}
+                    onChange={onChange}
                     onOk={onOk}
                 />
             </Form.Item>
@@ -148,7 +188,9 @@ export default function TranisactionHistoyPage() {
             dataIndex: 'blockHash',
             key: 'blockHash',
             render: function nameCell(name: string, record: any) {
-                return <div className='text'>{name}</div>
+                return <Popover content={name} placement='bottom' trigger="hover">
+                    <div className='text'>{name}</div>
+                </Popover>
             }
         },
         {
@@ -161,7 +203,9 @@ export default function TranisactionHistoyPage() {
             dataIndex: 'toAddress',
             key: 'toAddress',
             render: function nameCell(name: string, record: any) {
-                return <div className='text'>{name}</div>
+                return <Popover content={name} placement='bottom' trigger="hover">
+                    <div className='text'>{name}</div>
+                </Popover>
             }
         },
         {
@@ -178,6 +222,9 @@ export default function TranisactionHistoyPage() {
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
+            render: function nameCell(name: string, record: any) {
+                return <div style={{ textTransform: 'capitalize' }}>{name}</div>
+            }
         },
         {
             title: 'Status',
@@ -185,6 +232,14 @@ export default function TranisactionHistoyPage() {
             key: 'status',
             render: function nameCell(name: string, record: any) {
                 return <div style={{ textTransform: 'capitalize' }}>{name}</div>
+            }
+        },
+        {
+            title: 'Scan',
+            dataIndex: 'toAddress',
+            key: 'toAddress',
+            render: function nameCell(name: string, record: any) {
+                return <a href={`https://preprod.cexplorer.io/address/${name}`}>🔗</a>
             }
         }
     ]

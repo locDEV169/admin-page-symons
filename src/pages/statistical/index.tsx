@@ -47,12 +47,11 @@ export default function StatisticalPage() {
         console.log('onOk: ', value);
     };
 
-    async function getDataList() {
+    async function getDataList(query?: string) {
         try {
             const response = await api.get(`${Statistical_API}/${checkStatus === 1 ? 'store' : 'member'}`)
             console.log(`${Statistical_API}/${status}`);
             const { statistical: dataStatisticalHistory } = response.data
-            console.log(dataStatisticalHistory, response.data)
             setDataStatistical(dataStatisticalHistory)
         } catch (err) {
             notification.error({
@@ -61,7 +60,6 @@ export default function StatisticalPage() {
             })
         }
     }
-    console.log(dataStatistical, checkStatus);
 
     useEffect(() => {
         getDataList()
@@ -116,7 +114,37 @@ export default function StatisticalPage() {
             key: 'deviceId',
         },
         {
-            title: 'Lastest Point',
+            title: 'Grant',
+            dataIndex: 'grantCount',
+            key: 'grantCount',
+        },
+        {
+            title: 'Attach',
+            dataIndex: 'attachCount',
+            key: 'attachCount',
+        },
+        {
+            title: 'Exchange',
+            dataIndex: 'exchangeCount',
+            key: 'exchangeCount',
+        },
+        {
+            title: 'Cansel',
+            dataIndex: 'canselCount',
+            key: 'canselCount',
+        },
+        {
+            title: 'Detach',
+            dataIndex: 'detachCount',
+            key: 'detachCount',
+        },
+        {
+            title: 'Init',
+            dataIndex: 'initCount',
+            key: 'initCount',
+        },
+        {
+            title: 'Total',
             dataIndex: 'balance',
             key: 'balance',
         },
@@ -128,10 +156,11 @@ export default function StatisticalPage() {
 
     return (
         <Fragment>
+            <div className='title'>
+                Statistical
+            </div>
             <div className='statistical'>
-                <div className='statistical__title'>
-                    Statistical
-                </div>
+
                 {formSearch(checkStatus)}
                 <div className='statistical__table'>
                     <div className='statistical__radioGroup'>
