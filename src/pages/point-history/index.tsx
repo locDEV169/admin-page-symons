@@ -118,14 +118,18 @@ export default function ProductsPage() {
     };
 
     const onSearchClick = async (value: ISearch) => {
+        console.log(value.customerId, typeof value.customerId);
+
         const startTimeDate = startTime === '' ? null : startTime
         const endTimeDate = endTime === '' ? null : endTime
+        const deviceSearch = value.deviceId === '' ? null : value.deviceId
+        const cidSearch = String(value.customerId) === '' ? null : value.customerId
 
         const filter: Record<string, string | any> = {
             appId: value.appId,
-            deviceId: value.deviceId,
+            deviceId: deviceSearch,
             type: value.type,
-            customerId: value.customerId,
+            customerId: cidSearch,
             startTime: startTimeDate,
             endTime: endTimeDate
         }
