@@ -6,14 +6,17 @@ import 'antd/es/form/style/index.css'
 import { default as Input } from 'antd/es/input'
 import 'antd/es/input-number/style/index.css'
 import 'antd/es/input/style/index.css'
+import { default as Modal } from 'antd/es/modal'
+import 'antd/es/modal/style/index.css'
 import 'antd/es/pagination/style/index.css'
 import { default as Radio, RadioChangeEvent } from 'antd/es/radio'
 import 'antd/es/radio/style/index.css'
 import 'antd/es/select/style/index.css'
 import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
+import 'antd/lib/modal/style/index.css'
 import api from 'constants/api'
-import React, { Fragment, LegacyRef, useEffect, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { VButton } from 'vendor/pages'
 import './style.scss'
@@ -33,11 +36,12 @@ export default function StatisticalPage() {
     const Statistical_API = `points/statistical`
     let history = useHistory()
     const [form] = Form.useForm()
-    const params = new URLSearchParams(location.search)
-    const keyword: LegacyRef<Input> = useRef(null)
     const [checkStatus, setCheckStatus] = useState<number>(1)
     const [status, setStatus] = useState<string>('store')
     const [dataStatistical, setDataStatistical] = useState<Statistical[]>()
+    const [dataDevice, setDataDevice] = useState<any>()
+    const [open, setOpen] = useState<Boolean>(false);
+    const [cid, setCid] = useState<any>();
 
     const onSubmit = (values: any) => {
         console.log(values);
@@ -50,7 +54,6 @@ export default function StatisticalPage() {
     async function getDataList(query?: string) {
         try {
             const response = await api.get(`${Statistical_API}/${checkStatus === 1 ? 'store' : 'member'}`)
-            console.log(`${Statistical_API}/${status}`);
             const { statistical: dataStatisticalHistory } = response.data
             setDataStatistical(dataStatisticalHistory)
         } catch (err) {
@@ -94,16 +97,155 @@ export default function StatisticalPage() {
         </Form>
     }
 
-    const columnsCustomerID: ColumnsType<Statistical | object> = [
+    const columnsCustomerID: ColumnsType<Statistical | object | any> = [
         {
             title: 'Customer ID',
             dataIndex: 'customerId',
             key: 'customerId',
         },
         {
-            title: 'Lastest Point',
-            dataIndex: 'balance',
-            key: 'balance',
+            title: 'Init',
+            dataIndex: 'initCount',
+            key: 'initCount',
+            render: function nameCell(name: string) {
+                var totalInit: number = 0
+                Object.values(name).map((item) => {
+                    totalInit += Number(item)
+                })
+
+
+                return (
+                    <div>
+                        {totalInit}
+                    </div>
+                );
+            }
+        },
+        {
+            title: 'Grant',
+            dataIndex: 'grantCount',
+            key: 'grantCount',
+            render: function nameCell(name: string) {
+                var totalGrant: any = 0
+                Object.values(name).map((item) => {
+                    totalGrant += item
+                })
+
+
+                return (
+                    <div>
+                        {totalGrant}
+                    </div>
+                );
+            }
+        },
+        {
+            title: 'Attach',
+            dataIndex: 'attachCount',
+            key: 'attachCount',
+            render: function nameCell(name: string) {
+                var totalAttach: any = 0
+                Object.values(name).map((item) => {
+                    totalAttach += item
+                })
+
+
+                return (
+                    <div>
+                        {totalAttach}
+                    </div>
+                );
+            }
+        },
+        {
+            title: 'Exchange',
+            dataIndex: 'exchangeCount',
+            key: 'exchangeCount',
+            render: function nameCell(name: string) {
+                var totalExchange: any = 0
+                Object.values(name).map((item) => {
+                    totalExchange += item
+                })
+
+
+                return (
+                    <div>
+                        {totalExchange}
+                    </div>
+                );
+            }
+        },
+        {
+            title: 'Cansel',
+            dataIndex: 'canselCount',
+            key: 'canselCount',
+            render: function nameCell(name: string) {
+                var totalCansel: any = 0
+                Object.values(name).map((item) => {
+                    totalCansel += item
+                })
+
+
+                return (
+                    <div>
+                        {totalCansel}
+                    </div>
+                );
+            }
+        },
+        {
+            title: 'Detach',
+            dataIndex: 'detachCount',
+            key: 'detachCount',
+            render: function nameCell(name: string) {
+                var totalDetach: any = 0
+                Object.values(name).map((item) => {
+                    totalDetach += item
+                })
+
+
+                return (
+                    <div>
+                        {totalDetach}
+                    </div>
+                );
+            }
+        },
+        {
+            title: 'Expired',
+            dataIndex: 'expiredCount',
+            key: 'expiredCount',
+            render: function nameCell(name: string) {
+                var totalExpired: any = 0
+                Object.values(name).map((item) => {
+                    totalExpired += item
+                })
+
+
+                return (
+                    <div>
+                        {totalExpired}
+                    </div>
+                );
+            }
+        },
+        {
+            title: 'Total',
+            dataIndex: 'totalCount',
+            key: 'totalCount',
+            render: function nameCell(name: string) {
+                var totalExpired: any = 0
+                Object.values(name).map((item) => {
+                    totalExpired += item
+                })
+
+
+                return (
+                    <div>
+                        {totalExpired}
+                    </div>
+                );
+            }
         },
     ]
 
@@ -112,6 +254,11 @@ export default function StatisticalPage() {
             title: 'Store ID',
             dataIndex: 'deviceId',
             key: 'deviceId',
+        },
+        {
+            title: 'Init',
+            dataIndex: 'initCount',
+            key: 'initCount',
         },
         {
             title: 'Grant',
@@ -139,20 +286,96 @@ export default function StatisticalPage() {
             key: 'detachCount',
         },
         {
+            title: 'Expired',
+            dataIndex: 'expiredCount',
+            key: 'expiredCount',
+        },
+        {
+            title: 'Total',
+            dataIndex: 'totalCount',
+            key: 'totalCount',
+        },
+    ]
+
+    const convertData = (value, id) => {
+        value.map((item) => {
+            console.log(item.customerId, 'cid', cid, 'query', item.customerId === id);
+            console.log(item);
+
+        })
+    }
+
+    const columnsDeviceId: ColumnsType<Statistical | object> = [
+        {
+            title: 'Device ID',
+            dataIndex: 'initCount',
+            key: 'initCount',
+            render: function nameCell(name: string, index) {
+                // var deviceId = ''
+                // Object.keys(name).map((item) => {
+                //     deviceId === item
+                //     console.log(item);
+
+                // })
+
+                // return (
+                //     <div>
+                //         {deviceId}
+                //     </div>
+                // );
+            }
+        },
+        {
             title: 'Init',
             dataIndex: 'initCount',
             key: 'initCount',
         },
         {
+            title: 'Grant',
+            dataIndex: 'grantCount',
+            key: 'grantCount',
+        },
+        {
+            title: 'Attach',
+            dataIndex: 'attachCount',
+            key: 'attachCount',
+        },
+        {
+            title: 'Exchange',
+            dataIndex: 'exchangeCount',
+            key: 'exchangeCount',
+        },
+        {
+            title: 'Cansel',
+            dataIndex: 'canselCount',
+            key: 'canselCount',
+        },
+        {
+            title: 'Detach',
+            dataIndex: 'detachCount',
+            key: 'detachCount',
+        },
+        {
+            title: 'Expired',
+            dataIndex: 'expiredCount',
+            key: 'expiredCount',
+        },
+        {
             title: 'Total',
-            dataIndex: 'balance',
-            key: 'balance',
+            dataIndex: 'totalCount',
+            key: 'totalCount',
         },
     ]
 
     const onChange = (e: RadioChangeEvent) => {
         setCheckStatus(e.target.value);
     };
+
+    const onpenModal = async (value) => {
+        setCid(value.customerId)
+        checkStatus === 1 ? setOpen(false) : setOpen(!open)
+        convertData(dataStatistical, value.customerId)
+    }
 
     return (
         <Fragment>
@@ -172,7 +395,33 @@ export default function StatisticalPage() {
                     <Table
                         columns={checkStatus === 1 ? columnsStoreID : columnsCustomerID}
                         dataSource={dataStatistical}
+                        onRow={(record, rowIndex) => {
+                            return {
+                                // click row
+                                onClick: event => {
+                                    setCid(record.customerId)
+                                    onpenModal(record)
+                                }
+                            };
+                        }}
                     />
+                    <Modal
+                        centered
+                        open={open}
+                        onOk={() => setOpen(false)}
+                        onCancel={() => setOpen(false)}
+                        width={1000}
+                        className='modal'
+                    >
+                        <div className='title'>
+                            Customer ID: {cid}
+                        </div>
+                        <p>some contents...</p>
+                        <Table
+                            columns={columnsDeviceId}
+                            dataSource={dataStatistical}
+                        />
+                    </Modal>
                 </div>
 
             </div>
