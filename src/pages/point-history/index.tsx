@@ -126,9 +126,9 @@ export default function ProductsPage() {
         const cidSearch = String(value.customerId) === '' ? null : value.customerId
 
         const filter: Record<string, string | any> = {
-            appId: value.appId,
+            appId: value.appId || undefined,
             deviceId: deviceSearch,
-            type: value.type,
+            type: value.type || undefined,
             customerId: cidSearch,
             startTime: startTimeDate,
             endTime: endTimeDate
@@ -169,12 +169,10 @@ export default function ProductsPage() {
         switch (value) {
             case 2:
                 return 'Kaiin'
-                break;
             case 999:
-                return 'Kameiiten'
-                break;
+                return 'Kameiten'
             default:
-                break;
+                return ''
         }
     }
 
@@ -186,7 +184,8 @@ export default function ProductsPage() {
             >
                 <Select placeholder="System connection" showSearch>
                     <Select.Option value="2">Kaiin</Select.Option>
-                    <Select.Option value="999">Kameiiten</Select.Option>
+                    <Select.Option value="999">Kameiten</Select.Option>
+                    <Select.Option value="">All</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item
@@ -210,6 +209,8 @@ export default function ProductsPage() {
                     <Select.Option value="exchange">Exchange</Select.Option>
                     <Select.Option value="detach">Detach</Select.Option>
                     <Select.Option value="cansel">Cancel</Select.Option>
+                    <Select.Option value="expired">Expired</Select.Option>
+                    <Select.Option value="">All</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item>

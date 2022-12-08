@@ -96,9 +96,9 @@ export default function TranisactionHistoyPage() {
         const txHashSearch = value.txHash === '' ? null : value.txHash
 
         const filter: Record<string, string | any> = {
-            txhash: txHashSearch,
-            type: value.type,
-            status: value.status,
+            txHash: txHashSearch,
+            type: value.type || undefined,
+            status: value.status || undefined,
             startTime: startTimeDate,
             endTime: endTimeDate
         }
@@ -130,6 +130,7 @@ export default function TranisactionHistoyPage() {
                 <Select placeholder="Type" showSearch>
                     <Select.Option value="mint">Mint</Select.Option>
                     <Select.Option value="burn">Burn</Select.Option>
+                    <Select.Option value="">All</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item
@@ -140,6 +141,7 @@ export default function TranisactionHistoyPage() {
                     <Select.Option value="submitted">Submitted</Select.Option>
                     <Select.Option value="confirmed">Comfirmed</Select.Option>
                     <Select.Option value="failed">Failed</Select.Option>
+                    <Select.Option value="">All</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item>
@@ -160,9 +162,9 @@ export default function TranisactionHistoyPage() {
 
     const columns: ColumnsType<TransactionHistory | object> = [
         {
-            title: 'BlockTime',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
+            title: 'Block Time',
+            dataIndex: 'blockTime',
+            key: 'blockTime',
             render: function nameCell(name: string) {
                 const time = moment(name).format("YYYY/MM/DD HH:MM:SS")
                 return (
@@ -194,8 +196,8 @@ export default function TranisactionHistoyPage() {
         },
         {
             title: 'Tx Hash',
-            dataIndex: 'blockNumber',
-            key: 'customerId',
+            dataIndex: 'txid',
+            key: 'txid',
         },
         {
             title: 'To Address',

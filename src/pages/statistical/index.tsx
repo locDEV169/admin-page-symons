@@ -16,7 +16,7 @@ import { ColumnsType, default as Table } from 'antd/es/table'
 import 'antd/es/table/style/index.css'
 import 'antd/lib/modal/style/index.css'
 import api from 'constants/api'
-import _ from 'lodash'
+import { forEach, setWith } from 'lodash'
 import React, { Fragment, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { objectToSearchString } from 'serialize-query-params'
@@ -98,7 +98,8 @@ export default function StatisticalPage() {
                 <RangePicker
                     showTime={{ format: 'HH:mm' }}
                     format="YYYY-MM-DD HH:mm"
-                    // onChange={onChange}
+                    onChange={onChangeRangePicker}
+                    placeholder={["Start Time", "End Time"]}
                     onOk={onOk}
                 />
             </Form.Item>
@@ -310,94 +311,89 @@ export default function StatisticalPage() {
         },
     ]
 
-    const convertData = (value, id) => {
-        // value.map((item) => {
-        //     console.log(item.customerId, 'cid', cid, 'query', item.customerId === id);
-        //     console.log(item);
-
-        // })
-        let rst = {}
-        dataStatistical?.map((item) => {
-            console.log(item);
-            _.forEach(item, (value, key) => {
-                if (key.includes('Count')) {
-                    Object.keys(value).forEach(v => {
-                        _.setWith(rst, [v, key], [value, key])
-                    })
-                }
-            })
+    const convertData = (obj, id) => {
+        let data = {}
+        forEach(obj, (value, key) => {
+            if (key.includes('Count')) {
+                Object.keys(value).forEach(deviceId => {
+                    setWith(data, [deviceId, key], value[deviceId])
+                })
+            }
         })
-
-        console.log('rst', rst);
-        // Object.keys(rst).map((item, index) => {
-        //     console.log(item, index);
-        //     console.log(item['grantCount']);
-
-        // })
-        setDataDevice(rst)
+        const result = [data]
+            .flatMap(Object.entries)
+            .map(([deviceId, props]) => ({ ...props, deviceId }))
+        setDataDevice(result)
     }
-    console.log(dataStatistical);
-    console.log(dataDevice);
-
     const columnsDeviceId: ColumnsType<Statistical | object> = [
         {
             title: 'Device ID',
-            dataIndex: 'initCount',
-            key: 'initCount',
-            render: function nameCell(name: string, index) {
-                // var deviceId = ''
-                // Object.keys(name).map((item) => {
-                //     deviceId === item
-                //     console.log(item);
-
-                // })
-
-                // return (
-                //     <div>
-                //         {deviceId}
-                //     </div>
-                // );
-            }
+            dataIndex: 'deviceId',
+            key: 'deviceId',
         },
         {
             title: 'Init',
             dataIndex: 'initCount',
             key: 'initCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
         {
             title: 'Grant',
             dataIndex: 'grantCount',
             key: 'grantCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
         {
             title: 'Attach',
             dataIndex: 'attachCount',
             key: 'attachCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
         {
             title: 'Exchange',
             dataIndex: 'exchangeCount',
             key: 'exchangeCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
         {
             title: 'Cansel',
             dataIndex: 'canselCount',
             key: 'canselCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
         {
             title: 'Detach',
             dataIndex: 'detachCount',
             key: 'detachCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
         {
             title: 'Expired',
             dataIndex: 'expiredCount',
             key: 'expiredCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
         {
             title: 'Total',
             dataIndex: 'totalCount',
             key: 'totalCount',
+            render: function nameCell(name: string) {
+                return name || 0
+            }
         },
     ]
 
@@ -405,16 +401,33 @@ export default function StatisticalPage() {
         setCheckStatus(e.target.value);
     };
 
+    const onChangeRangePicker = (value, dateString: [string, string]) => {
+        setStartTime(dateString[0])
+        setEndTime(dateString[1])
+    }
+
     const onpenModal = async (value) => {
         setCid(value.customerId)
         checkStatus === 1 ? setOpen(false) : setOpen(!open)
-        convertData(dataStatistical, value.customerId)
+        convertData((dataStatistical || []).filter(d => d.customerId === value.customerId)[0], value.customerId)
     }
 
-    const onSearchClick = async (value: any) => {
-        const startTimeDate = startTime === '' ? null : startTime
-        const endTimeDate = endTime === '' ? null : endTime
-        const id = value.storeId === '' ? null : value.storeId
+    const onSearchClick = async (value: any, modalType: number) => {
+        const startTimeDate = startTime || undefined
+        const endTimeDate = endTime || undefined
+        const id = value.storeId || value.customerId || undefined
+        switch (modalType) {
+            case 1: // store
+                break;
+            case 2: // member
+                const deviceId = value.deviceId || undefined
+                if (!deviceId) {
+                    return convertData((dataStatistical || []).filter(d => d.customerId === id)[0], id)
+                }
+                return setDataDevice(dataDevice.filter(a => (a.deviceId || '').toLowerCase().indexOf(deviceId.toLowerCase()) !== -1))
+            default:
+                break;
+        }
 
         const filter: Record<string, string | any> = {
             id: id,
@@ -430,8 +443,8 @@ export default function StatisticalPage() {
         getDataList(covertParams)
     }
 
-    const onSearch = async (values: any) => {
-        onSearchClick(values)
+    const onSearch = async (values: any, modalType: number) => {
+        onSearchClick(values, modalType)
     }
 
     return (
@@ -473,10 +486,29 @@ export default function StatisticalPage() {
                         <div className='title'>
                             Customer ID: {cid}
                         </div>
-                        <p>some contents...</p>
+                        <Form onFinish={(values: any) => onSearch(values, checkStatus)} form={form} className='form-search'>
+                            <Form.Item
+                                name='customerId'
+                                className='form-search__deviceId'
+                                initialValue={cid}
+                                style={{ display: 'none' }}
+                            >
+                            </Form.Item>
+                            <Form.Item
+                                name='deviceId'
+                                className='form-search__deviceId'>
+                                <Input placeholder='Device ID' />
+                            </Form.Item>
+                            <Form.Item>
+                                <VButton type='primary' className='form-search__btnSearch' htmlType='submit'>
+                                    Search
+                                </VButton>
+                            </Form.Item>
+                        </Form>
                         <Table
                             columns={columnsDeviceId}
-                            dataSource={dataStatistical}
+                            dataSource={dataDevice}
+                            pagination={{ pageSize: 10 }}
                         />
                     </Modal>
                 </div>
