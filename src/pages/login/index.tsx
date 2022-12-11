@@ -95,7 +95,11 @@ export default function LoginPage() {
                                 message: 'Please input your username!',
                             },
                         ]}
-                        style={{ display: 'flex' }}>
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}
+                    >
                         <Input className="form__input" />
                     </Form.Item>
                     <Form.Item
@@ -107,7 +111,7 @@ export default function LoginPage() {
                                 message: 'Please input your password!',
                             },
                         ]}
-                        style={{ display: 'flex' }}>
+                    >
                         <Input.Password style={{ width: '100%' }} />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 8, span: 16, }}>
